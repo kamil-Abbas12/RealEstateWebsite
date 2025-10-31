@@ -1,0 +1,39 @@
+{
+  "name": "realestatewebsite",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@chakra-ui/icons": "^2.2.4",
+    "@chakra-ui/next-js": "^2.4.2",
+    "@chakra-ui/react": "^2.8.1",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "apify-client": "^2.19.0",
+    "axios": "^1.12.2",
+    "framer-motion": "^12.23.24",
+    "leaflet": "^1.9.4",
+    "millify": "^6.1.0",
+    "next": "^15.5.5",
+    "next-translate": "^2.6.2",
+    "next-translate-plugin": "^2.6.2",
+    "nprogress": "^0.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-horizontal-scrolling-menu": "^8.2.0",
+    "react-icons": "^5.5.0",
+    "react-leaflet": "^5.0.0",
+    "react-slick": "^0.31.0",
+    "slick-carousel": "^1.8.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.5"
+  }
+}

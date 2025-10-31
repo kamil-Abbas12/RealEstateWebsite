@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "brand": "Evergreen Properties",
+    "home": "Home",
+    "search": "Search",
+    "buy": "Buy",
+    "rent": "Rent",
+    "language": "Language"
+  },
+  "hero": {
+    "welcome": "Welcome to Evergreen Properties",
+    "subtitle": "Find your next home with ease — a curated collection of properties across the UK, USA "
+  },
+  "searchFilters": {
+    "buy": "Buy",
+    "rent": "Rent",
+    "placeholder_area": "City or area",
+    "min_price": "Min Price",
+    "max_price": "Max Price",
+    "min_beds": "Min Beds",
+    "search": "Search"
+  },
+  
+ 
+ 
+  "footer": {
+    "quick_links": "Quick Links",
+    "contact_us": "Contact Us",
+    "follow_us": "Follow Us",
+    "copyright": "© {year} Evergreen Properties. All rights reserved.",
+    "designed_by": "Designed by Evergreen Team"
+  }
+}

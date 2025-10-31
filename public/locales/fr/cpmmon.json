@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "brand": "Evergreen Properties",
+    "home": "Accueil",
+    "search": "Recherche",
+    "buy": "Acheter",
+    "rent": "Louer",
+    "language": "Langue"
+    
+  },
+  "hero": {
+    "welcome": "Bienvenue chez Evergreen Properties",
+    "subtitle": "Trouvez votre prochaine maison facilement — une sélection de propriétés au Royaume-Uni, aux États-Unis et en Europe."
+  },
+  "searchFilters": {
+    "buy": "Acheter",
+    "rent": "Louer",
+    "placeholder_area": "Ville ou région",
+    "min_price": "Prix min",
+    "max_price": "Prix max",
+    "min_beds": "Chambres min",
+    "search": "Rechercher"
+  },
+ 
+  
+  "footer": {
+    "quick_links": "Liens rapides",
+    "contact_us": "Contactez-nous",
+    "follow_us": "Suivez-nous",
+    "copyright": "© {year} Evergreen Properties. Tous droits réservés.",
+    "designed_by": "Conçu par l'équipe Evergreen"
+  }
+}
