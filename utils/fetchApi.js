@@ -39,26 +39,7 @@ export const fetchApi = async (type, location, country) => {
       };
       break;
 
-    case "es":
-    case "it":
-    case "pt":
-      url = "https://idealista2.p.rapidapi.com/es/search";
-      options = {
-        method: "GET",
-        url,
-        params: {
-          country,
-          operation: type === "sale" ? "sale" : "rent",
-          location: location || "Madrid",
-          numPage: "1",
-        },
-        headers: {
-          "x-rapidapi-key": process.env.RAPIDAPI_KEY,
-          "x-rapidapi-host": "idealista2.p.rapidapi.com",
-        },
-      };
-      break;
-
+   
     default:
       throw new Error("Unsupported country");
   }
@@ -118,7 +99,7 @@ export const fetchApi = async (type, location, country) => {
       raw: item,
     }));
   } catch (error) {
-    console.error("❌ API Fetch Error:", error.message);
+    // console.error("❌ API Fetch Error:", error.message);
     return [];
   }
 };

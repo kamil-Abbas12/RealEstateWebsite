@@ -7,7 +7,6 @@ import SearchFilters from "@/components/SearchFilters";
 import HeroSection from "@/components/HeroSection";
 import PropertyCarousel from "@/components/PropertyCarousel";
 import Services from "@/components/Services";
-import ContactForm from "@/components/ContactForm";
 
 const WorldPropertiesSection = dynamic(
   () => import("../components/WorldPropertiesSection"),

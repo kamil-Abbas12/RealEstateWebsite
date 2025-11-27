@@ -1,45 +1,57 @@
 // pages/_app.js
-import { ChakraProvider, defaultSystem,Box,Spinner } from '@chakra-ui/react'
-import nProgress from 'nprogress'
-import Router, { useRouter } from 'next/router'
-import Head from 'next/head'
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { SessionProvider } from "next-auth/react";
+import Router from "next/router";
+import nProgress from "nprogress";
+import "nprogress/nprogress.css";
+import Head from "next/head";
+import Layout from "../components/Layout";
+import ScrollToTop from "@/components/ScrollToTop";
+import { useEffect } from "react";
 import "leaflet/dist/leaflet.css";
-import ScrollToTop from "@/components/ScrollToTop"; // import the button
 
-import Layout from "../components/Layout"
-import { useEffect, useState } from 'react';
-function MyApp({ Component, pageProps }) {
-    const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  
+// Initialize nProgress
+Router.events.on("routeChangeStart", () => nProgress.start());
+Router.events.on("routeChangeComplete", () => nProgress.done());
+Router.events.on("routeChangeError", () => nProgress.done());
+
+// Custom theme (optional)
+const theme = extendTheme({
+  styles: {
+    global: {
+      body: {
+        bg: "gray.50",
+        color: "gray.800",
+      },
+    },
+  },
+});
+
+function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+  // Prevent rendering issues (SSR)
   useEffect(() => {
-    router.events.on("routeChangeStart", () => setLoading(true));
-    router.events.on("routeChangeComplete", () => setLoading(false));
-    router.events.on("routeChangeError", () => setLoading(false));
-    return () => {
-      router.events.off("routeChangeStart", () => setLoading(true));
-      router.events.off("routeChangeComplete", () => setLoading(false));
-      router.events.off("routeChangeError", () => setLoading(false));
-    };
-  }, [router.events]);
+    if (typeof window !== "undefined") {
+      import("leaflet/dist/leaflet.css");
+    }
+  }, []);
+
   return (
-   <>
-   <Head>
+    <>
+      <Head>
+        <title>Real Estate Platform</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
 
-   </Head>
-   
-   <ChakraProvider value={defaultSystem} >
-          <Box minH="100vh" bg="green.800" color="white">
-
-    <Layout >
-      
-      <Component {...pageProps} />
-       <ScrollToTop />
-    </Layout>
-    </Box>
-    </ChakraProvider>
-   </>
-  )
+      <SessionProvider session={session}>
+        <ChakraProvider theme={theme}>
+          <Layout>
+            <Component {...pageProps} />
+            <ScrollToTop />
+          </Layout>
+        </ChakraProvider>
+      </SessionProvider>
+    </>
+  );
 }
 
-export default MyApp
+export default MyApp;

@@ -1,4 +1,6 @@
 // pages/search.js
+import clientPromise from "@/lib/mongodb";
+
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -59,6 +61,8 @@ const normalizeZillow = (raw) => {
 
 /* ----------------- component ----------------- */
 const Search = ({ properties = [], initialQuery = {} }) => {
+console.log("Received properties:", properties);
+
   const [searchFiltersOpen, setSearchFiltersOpen] = useState(false);
 const router = useRouter();
 const locale = router.locale || "en";
@@ -171,6 +175,7 @@ export default Search;
 
 /* ----------------- server-side fetch (getServerSideProps) ----------------- */
 export async function getServerSideProps({ query }) {
+
   const listing_status = query.listing_status === "sale" ? "sale" : "rent";
   const rawArea = query.area || null;
   const rawCountry = query.country || null; // kept in case you reuse later
@@ -247,7 +252,7 @@ export async function getServerSideProps({ query }) {
   const fetchZillowDirect = async (locationArg = "Houston, TX", options = {}) => {
     try {
       const { minPrice, maxPrice, beds, propertyType, page = 1, perPage = 12 } = options;
-      const url = "https://zillow69.p.rapidapi.com/search";
+      const url = "https://zillow56.p.rapidapi.com/search";
       const params = {
         location: locationArg,
         status_type: listing_status === "sale" ? "ForSale" : "ForRent",
@@ -262,7 +267,7 @@ export async function getServerSideProps({ query }) {
         params,
         headers: {
           "x-rapidapi-key": process.env.NEXT_PUBLIC_RAPIDAPI_KEY_ZILLOW,
-          "x-rapidapi-host": "zillow69.p.rapidapi.com",
+          "x-rapidapi-host": "zillow56.p.rapidapi.com",
         },
         timeout: 20000,
       });
@@ -342,11 +347,24 @@ export async function getServerSideProps({ query }) {
     const zooplaNormalized = (zooplaRaw || []).map(normalizeZoopla).slice(0, perSource);
     const zillowNormalized = (zillowRaw || []).map(normalizeZillow).slice(0, perSource);
 
-    // Combine and filter strictly by area (Zoopla first, then Zillow)
-    const combined = [
-      ...zooplaNormalized.filter(matchesArea),
-      ...zillowNormalized.filter(matchesArea),
-    ];
+    // ⭐ Fetch Local DB properties
+const localDBProperties = await getLocalProperties(area, country, listing_status);
+
+   // ⭐ Combine ALL sources
+const combined = [
+  ...localDBProperties,
+  ...zooplaNormalized.filter(matchesArea),
+  ...zillowNormalized.filter(matchesArea),
+];
+// ⭐ Sort: Premium listings first (from Local DB only)
+combined.sort((a, b) => {
+  const aPremium = a.raw?.isPremium ? 1 : 0;
+  const bPremium = b.raw?.isPremium ? 1 : 0;
+
+  return bPremium - aPremium; // premium on top
+});
+
+
 
     return {
       props: {
@@ -362,5 +380,59 @@ export async function getServerSideProps({ query }) {
         initialQuery: query,
       },
     };
+  }
+}
+async function getLocalProperties(area, country, listing_status) {
+  try {
+    const client = await clientPromise;
+    const db = client.db("realestate");
+
+    const query = {};
+
+    if (area) {
+      query.address = { $regex: area, $options: "i" };
+    }
+
+    if (country) {
+      query.country = { $regex: country, $options: "i" };
+    }
+
+    if (listing_status) {
+      query.listingType = listing_status === "sale" ? "sale" : "rent";
+    }
+
+    const props = await db.collection("properties").find(query).toArray();
+function safeDoc(p) {
+  const obj = { ...p };
+
+  // Convert ObjectId
+  if (obj._id) obj._id = obj._id.toString();
+
+  // Convert all Date fields to ISO strings
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] instanceof Date) {
+      obj[key] = obj[key].toISOString();
+    }
+  });
+
+  return obj;
+}
+    return props.map((p) => ({
+      source: "Local",
+      id: p._id.toString(),
+      title: p.title,
+      price: p.price,
+      images: p.images || null,
+      address: p.address,
+      bedrooms: p.bedrooms || null,
+    
+raw: safeDoc(p),
+
+
+
+    }));
+  } catch (err) {
+    console.error("Local DB fetch error:", err);
+    return [];
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Flex, Heading, IconButton, Image, Text } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Slider from "react-slick";
 import { FaHeart, FaRegHeart, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useRouter } from "next/router";
@@ -25,15 +25,25 @@ export default function PropertyCarousel() {
   };
 
   const [liked, setLiked] = useState({});
-  const toggleLike = (id) => setLiked((prev) => ({ ...prev, [id]: !prev[id] }));
+  const [properties, setProperties] = useState([]);
 
-  const properties = [
-    { id: 1, img: "/property1.jpg", price: "$1,200,000", area: "2200 sq ft" },
-    { id: 2, img: "/property2.jpg", price: "$1,500,000", area: "1800 sq ft" },
-    { id: 3, img: "/property3.jpg", price: "$1,350,000", area: "2400 sq ft" },
-    { id: 4, img: "/property4.jpg", price: "$780,000", area: "1600 sq ft" },
-    { id: 5, img: "/property5.jpg", price: "$1,050,000", area: "2000 sq ft" },
-  ];
+  const toggleLike = (id) =>
+    setLiked((prev) => ({ ...prev, [id]: !prev[id] }));
+
+  // ⬇️ Load premium listings from API
+  useEffect(() => {
+    async function fetchPremium() {
+      try {
+        const res = await fetch("/api/premium-properties");
+        const data = await res.json();
+        if (data.success) setProperties(data.data);
+      } catch (err) {
+        console.error("Failed to load premium properties", err);
+      }
+    }
+
+    fetchPremium();
+  }, []);
 
   let sliderRef;
 
@@ -51,7 +61,7 @@ export default function PropertyCarousel() {
 
   return (
     <Box position="relative" w="100%" py={10} px={{ base: 4, md: 10 }}>
-      {/* Header Section */}
+      {/* Header */}
       <Flex justify="space-between" align="center" mb={6}>
         <Heading color="white" fontSize={{ base: "xl", md: "2xl" }}>
           {t("carousel.title")}
@@ -64,7 +74,6 @@ export default function PropertyCarousel() {
             onClick={() => sliderRef.slickPrev()}
             colorScheme="whiteAlpha"
             variant="outline"
-            _hover={{ bg: "whiteAlpha.300" }}
           />
           <IconButton
             aria-label="Next"
@@ -72,7 +81,6 @@ export default function PropertyCarousel() {
             onClick={() => sliderRef.slickNext()}
             colorScheme="whiteAlpha"
             variant="outline"
-            _hover={{ bg: "whiteAlpha.300" }}
           />
         </Flex>
       </Flex>
@@ -80,23 +88,44 @@ export default function PropertyCarousel() {
       {/* Carousel */}
       <Slider ref={(c) => (sliderRef = c)} {...settings}>
         {properties.map((p) => (
-          <Box key={p.id} px={3}>
+          <Box key={p._id} px={3}>
             <Box
-              position="relative"
-              borderRadius="2xl"
-              overflow="hidden"
-              bg="white"
-              color={"gray.800"}
-              _hover={{ transform: "scale(1.02)" }}
-              transition="all 0.3s ease"
-            >
-              <Image src={p.img} alt={p.price} w="100%" h="250px" objectFit="cover" />
-              {/* Heart Icon */}
+  position="relative"
+  borderRadius="2xl"
+  overflow="hidden"
+  bg="white"
+  color="gray.800"
+  h="370px"       
+  _hover={{ transform: "scale(1.02)" }}
+  transition="all 0.3s ease"
+  cursor="pointer"
+  onClick={() => router.push(`/property/${p._id}`)}
+>
+
+              {/* Image */}
+              <Image
+                src={p.coverPhoto || "/placeholder.jpg"}
+                alt={p.price}
+                w="100%"
+                h="250px"
+                objectFit="cover"
+              />
+
+              {/* Heart icon */}
               <Box position="absolute" top="3" right="3" zIndex="2">
                 <IconButton
                   aria-label="Like"
-                  icon={liked[p.id] ? <FaHeart color="red" /> : <FaRegHeart color="white" />}
-                  onClick={() => toggleLike(p.id)}
+                  icon={
+                    liked[p._id] ? (
+                      <FaHeart color="red" />
+                    ) : (
+                      <FaRegHeart color="white" />
+                    )
+                  }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleLike(p._id);
+                  }}
                   bg="rgba(0,0,0,0.4)"
                   _hover={{ bg: "rgba(0,0,0,0.6)" }}
                   borderRadius="full"
@@ -107,10 +136,15 @@ export default function PropertyCarousel() {
               {/* Info */}
               <Box p={4}>
                 <Text color="goldenrod" fontWeight="bold" fontSize="lg">
-                  {p.price}
+                  ${p.price?.toLocaleString()}
                 </Text>
+
                 <Text color="gray.900" fontSize="sm">
-                  {p.area}
+                  {p.area || p.size || "—"} sq ft
+                </Text>
+
+                <Text color="gray.700" fontSize="xs">
+                  {p.location || ""}
                 </Text>
               </Box>
             </Box>

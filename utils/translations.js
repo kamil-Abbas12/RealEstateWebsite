@@ -7,6 +7,9 @@ const translations = {
       search: "Search",
       buy: "Buy",
       rent: "Rent",
+      dashboard: "Dashboard",
+      blog: "Blog",
+      properties:"Properties"
     },
     hero: {
       title: "Welcome to Evergreen Properties",
@@ -112,6 +115,9 @@ const translations = {
       search: "Rechercher",
       buy: "Acheter",
       rent: "Louer",
+      dashboard: "Tableau de bord",
+      blog: "Blog",
+      properties:"Propriétés"
     },
     hero: {
       title: "Bienvenue chez Evergreen Properties",
@@ -218,6 +224,10 @@ const translations = {
       search: "Buscar",
       buy: "Comprar",
       rent: "Alquilar",
+      dashboard: "Panel de control",
+            blog: "Blog",
+
+      properties:"Propiedades"
     },
     hero: {
       title: "Bienvenido a Evergreen Properties",

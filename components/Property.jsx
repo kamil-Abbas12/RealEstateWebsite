@@ -10,28 +10,44 @@ import DefaultImage from "../assets/images/house.jpg";
 const GBP_TO_USD = 1.25; // fixed conversion rate for GBP
 
 export default function Property({ property }) {
-  const {
-    id,
-    listing_id,
-    title,
-    price,
-    priceLabel,
-    currency,
-    bedrooms,
-    bathrooms,
-    image,
-    location,
-    propertyType,
-  } = property || {};
+ const {
+  _id,
+  title,
+  price,
+  currency,
+  bedrooms,
+  bathrooms,
+  images,
+  address,
+  listingType,
+} = property || {};
+
 
   // image fallback logic
-  const imageUrlRaw = image || DefaultImage;
-  const imageSrc =
-    typeof imageUrlRaw === "string"
-      ? imageUrlRaw
-      : imageUrlRaw?.src || imageUrlRaw?.default || DefaultImage;
+const raw = images?.[0] || DefaultImage;
+  // UNIVERSAL IMAGE HANDLER (Zillow + Zoopla + Local)
+const imageSrc =
+  // Local DB structure
+  property?.image ||
 
-  const origCurrency = (currency || "GBP").toUpperCase();
+  // Local uploaded images array: ["url1", "url2"]
+  (Array.isArray(images) && typeof images[0] === "string" && images[0]) ||
+
+  // Local uploaded Next/Image file import (object)
+  (Array.isArray(images) && typeof images[0] === "object" && (images[0].url || images[0].src)) ||
+
+  // Zoopla typical structure
+  property?.image_url ||
+  property?.thumbnail_url ||
+
+  // Zillow structure
+  property?.raw?.imgSrc ||
+
+  // Final fallback
+  DefaultImage;
+
+
+  const origCurrency = (currency || "Usd").toUpperCase();
 
   let displayUSD = null;
   if (typeof price === "number") {
@@ -39,11 +55,16 @@ export default function Property({ property }) {
   }
 
   const displayPrice = displayUSD
-    ? `$${millify(displayUSD)}`
-    : priceLabel || "N/A";
-  const originalPriceStr = priceLabel
-    ? `${priceLabel} ${origCurrency}`
-    : null;
+  ? `$${millify(displayUSD)}`
+  : price
+  ? `${price} ${origCurrency}`
+  : "N/A";
+
+const originalPriceStr = price
+  ? `${price} ${origCurrency}`
+  : null;
+
+
 
   return (
     <Box
@@ -95,13 +116,14 @@ export default function Property({ property }) {
           <Flex alignItems="center" gap="1">
             <FaBath /> <Text>{bathrooms ?? "—"}</Text>
           </Flex>
-          <Flex alignItems="center" gap="1">
-            <BsGridFill /> <Text>{propertyType ?? "—"}</Text>
-          </Flex>
+         <Flex alignItems="center" gap="1">
+  <BsGridFill /> <Text>{listingType?.toUpperCase() ?? "—"}</Text>
+</Flex>
+
         </Flex>
 
         <Text mt="2" fontSize="md" color="gray.700" noOfLines={2}>
-          {location || title}
+{address || title}
         </Text>
       </Box>
     </Box>

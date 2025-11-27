@@ -73,11 +73,11 @@ async function fetchZoopla(area, listing_status = "sale", page = 1, key) {
       (Array.isArray(dataNode.listings) ? dataNode.listings : []);
 
     const results = (rawListings || []).map(normalizeZoopla);
-    console.log(`✅ Zoopla fetched ${results.length} results for "${query}" (channel=${channel})`);
+    // console.log(`✅ Zoopla fetched ${results.length} results for "${query}" (channel=${channel})`);
     return { provider: "Zoopla", results };
   } catch (err) {
     // Log status & body to help debug 429/quota vs other errors
-    console.error("❌ Zoopla fetch error:", err?.response?.status, err?.response?.data || err?.message || err);
+    // console.error("❌ Zoopla fetch error:", err?.response?.status, err?.response?.data || err?.message || err);
     return { provider: "Zoopla", results: [] };
   }
 }
@@ -85,21 +85,21 @@ async function fetchZoopla(area, listing_status = "sale", page = 1, key) {
 async function fetchZillow(area, listing_status = "sale", page = 1, key) {
   try {
     const status_type = listing_status === "sale" ? "ForSale" : "ForRent";
-    const res = await axios.get("https://zillow69.p.rapidapi.com/search", {
+    const res = await axios.get("https://zillow56.p.rapidapi.com/search", {
       params: { location: area, status_type, page },
       headers: {
         "x-rapidapi-key": key,
-        "x-rapidapi-host": "zillow69.p.rapidapi.com",
+        "x-rapidapi-host": "zillow56.p.rapidapi.com",
       },
       timeout: 12000,
     });
 
     const rawResults = res.data?.props || res.data?.results || res.data?.data || res.data || [];
     const results = (Array.isArray(rawResults) ? rawResults : []).map(normalizeZillow);
-    console.log(`✅ Zillow fetched ${results.length} results for "${area}"`);
+    // console.log(`✅ Zillow fetched ${results.length} results for "${area}"`);
     return { provider: "Zillow", results };
   } catch (err) {
-    console.error("❌ Zillow fetch error:", err?.response?.status, err?.response?.data || err?.message || err);
+    // console.error("❌ Zillow fetch error:", err?.response?.status, err?.response?.data || err?.message || err);
     return { provider: "Zillow", results: [] };
   }
 }
@@ -136,7 +136,7 @@ export default async function handler(req, res) {
     // nothing found
     return res.status(200).json({ provider: null, results: [], count: 0 });
   } catch (err) {
-    console.error("API handler error:", err?.response?.data || err?.message || err);
+    // console.error("API handler error:", err?.response?.data || err?.message || err);
     return res.status(500).json({ results: [], error: err?.message || String(err) });
   }
 }

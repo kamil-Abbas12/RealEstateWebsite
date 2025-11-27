@@ -28,7 +28,7 @@ export async function GET(req) {
 
     return NextResponse.json({ listings: response.data.listings || [] });
   } catch (err) {
-    console.error("Zoopla API Error:", err.response?.data || err.message);
+    // console.error("Zoopla API Error:", err.response?.data || err.message);
     return NextResponse.json({ listings: [], error: "Failed to fetch Zoopla data" });
   }
 }
