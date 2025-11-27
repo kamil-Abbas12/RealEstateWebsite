@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import Property from "@/components/property";
+import Property from "@/components/Property.jsx";
 import { Box, Heading, SimpleGrid, Spinner, Text, Badge } from "@chakra-ui/react";
 import Link from "next/link";
 
