@@ -139,16 +139,7 @@ const normalizeZillowDetail = (raw) => {
 
 // ==== Component UI ====
 const PropertyDetails = ({ propertyDetails }) => {
-  const toast = useToast();
-
-  if (!propertyDetails) {
-    return (
-      <Box p="8">
-        <Text>Property not found.</Text>
-      </Box>
-    );
-  }
-
+  
   const { isOpen: isPlanOpen, onOpen: onPlanOpen, onClose: onPlanClose } = useDisclosure();
   const { isOpen: isOwnerOpen, onOpen: onOwnerOpen, onClose: onOwnerClose } = useDisclosure();
   const { isOpen: isGalleryOpen, onOpen: onGalleryOpen, onClose: onGalleryClose } = useDisclosure();
@@ -183,6 +174,16 @@ const PropertyDetails = ({ propertyDetails }) => {
 
   const gallery = Array.isArray(photos) ? photos : [];
   const [selected, setSelected] = useState(0);
+
+  const toast = useToast();
+
+  if (!propertyDetails) {
+    return (
+      <Box p="8">
+        <Text>Property not found.</Text>
+      </Box>
+    );
+  }
 
   // ---------- NEW: handlers that prefer direct owner contact when available ----------
   const handlePlanClick = () => {

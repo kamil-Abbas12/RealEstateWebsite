@@ -116,7 +116,7 @@ export default function LoginPage() {
           </Button>
 
           <Text>
-            Don't have an account?{" "}
+            Don't have an account?
             <ChakraLink as={NextLink} href="/signup" color="green.600">
               Sign Up
             </ChakraLink>
