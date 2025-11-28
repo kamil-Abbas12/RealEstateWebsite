@@ -40,6 +40,8 @@ a {
     color-scheme: dark;
   }
 }
+
+/* ===== FIXED SLICK CAROUSEL STYLES ===== */
 .slick-slider,
 .slick-list,
 .slick-track {
@@ -47,8 +49,22 @@ a {
   -webkit-overflow-scrolling: touch;
 }
 
-.slick-track {
-  display: flex !important;
+/* Only apply flex on larger screens */
+@media (min-width: 769px) {
+  .slick-track {
+    display: flex !important;
+  }
+}
+
+/* On mobile, let React Slick handle the layout */
+@media (max-width: 768px) {
+  .slick-track {
+    display: block !important; /* Let slick handle it naturally */
+  }
+  
+  .slick-slide {
+    float: left; /* Slick's default behavior */
+  }
 }
 
 .slick-slide {
