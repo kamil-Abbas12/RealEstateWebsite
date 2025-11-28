@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Flex, Heading, IconButton, Image, Text } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Slider from "react-slick";
 import { FaHeart, FaRegHeart, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useRouter } from "next/router";
@@ -26,6 +26,7 @@ export default function PropertyCarousel() {
 
   const [liked, setLiked] = useState({});
   const [properties, setProperties] = useState([]);
+  const sliderRef = useRef(null); // stable ref
 
   const toggleLike = (id) =>
     setLiked((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -45,28 +46,33 @@ export default function PropertyCarousel() {
     fetchPremium();
   }, []);
 
-  let sliderRef;
-
-  // FIXED SETTINGS - More aggressive mobile breakpoints
   const settings = {
-  dots: false,
-  infinite: true,
-  speed: 500,
-  slidesToShow: 4,
-  slidesToScroll: 1,
-  responsive: [
-    { breakpoint: 1024, settings: { slidesToShow: 3 } },
-    { breakpoint: 768, settings: { slidesToShow: 2 } },
-    { breakpoint: 640, settings: { slidesToShow: 1 } },
-        { breakpoint: 640, settings: { slidesToShow: 1 } },
-            { breakpoint: 480, settings: { slidesToShow: 1 } }, 
-            { breakpoint: 320, settings: { slidesToShow: 1 } }, 
-
-             // Critical for mobile
-
-
-  ],
-};
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    adaptiveHeight: true,
+    variableWidth: false,     // important: do not use variable widths
+    centerMode: false,
+    centerPadding: "0px",
+    swipeToSlide: true,
+    cssEase: "ease",
+    initialSlide: 0,
+    responsive: [
+      { breakpoint: 1280, settings: { slidesToShow: 3 } },
+      { breakpoint: 1024, settings: { slidesToShow: 3 } },
+      { breakpoint: 768, settings: { slidesToShow: 2 } },
+      {
+        // Mobile: force one slide per view and let each slide be full width
+        breakpoint: 640,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
 
   return (
     <Box position="relative" w="100%" py={10} px={{ base: 4, md: 10 }}>
@@ -80,7 +86,7 @@ export default function PropertyCarousel() {
           <IconButton
             aria-label="Previous"
             icon={<FaChevronLeft />}
-            onClick={() => sliderRef?.slickPrev()}
+            onClick={() => sliderRef.current?.slickPrev()}
             colorScheme="whiteAlpha"
             variant="outline"
             size={{ base: "sm", md: "md" }}
@@ -88,7 +94,7 @@ export default function PropertyCarousel() {
           <IconButton
             aria-label="Next"
             icon={<FaChevronRight />}
-            onClick={() => sliderRef?.slickNext()}
+            onClick={() => sliderRef.current?.slickNext()}
             colorScheme="whiteAlpha"
             variant="outline"
             size={{ base: "sm", md: "md" }}
@@ -98,23 +104,28 @@ export default function PropertyCarousel() {
 
       {/* Carousel */}
       <Box className="property-carousel-container">
-        <Slider ref={(c) => (sliderRef = c)} {...settings}>
+        <Slider ref={sliderRef} {...settings}>
           {properties.map((p) => (
-            <Box key={p._id} px={{ base: 2, md: 3 }}>
+            <Box
+              key={p._id}
+              // wrapper around slide: ensure full width on mobile, fixed-ish max on larger screens
+              className="property-slide"
+              px={{ base: 2, md: 3 }}
+              // use Chakra style props for spacing, but width controlled in CSS below
+            >
               <Box
                 position="relative"
                 borderRadius="2xl"
                 overflow="hidden"
                 bg="white"
                 color="gray.800"
-                h="370px"
+                // let height adapt for mobile (adaptiveHeight true)
+                h={{ base: "auto", md: "370px" }}
                 _hover={{ transform: "scale(1.02)" }}
                 transition="all 0.3s ease"
                 cursor="pointer"
                 onClick={() => router.push(`/property/${p._id}`)}
-                // IMPORTANT: Force minimum width on mobile
-                minW={{ base: "280px", md: "auto" }}
-                maxW={{ base: "320px", md: "auto" }}
+                // remove minW/maxW inline style — handled by CSS to avoid react-slick inline width conflicts
                 mx="auto"
               >
                 {/* Image */}
@@ -122,7 +133,7 @@ export default function PropertyCarousel() {
                   src={p.coverPhoto || "/placeholder.jpg"}
                   alt={p.price}
                   w="100%"
-                  h="250px"
+                  h={{ base: "220px", md: "250px" }}
                   objectFit="cover"
                 />
 
@@ -168,24 +179,46 @@ export default function PropertyCarousel() {
         </Slider>
       </Box>
 
-      {/* Add custom CSS for mobile fix */}
+      {/* CSS fixes */}
       <style jsx global>{`
-        @media (max-width: 768px) {
-          .property-carousel-container .slick-track {
-            display: flex !important;
-          }
-          
-          .property-carousel-container .slick-slide {
-            height: inherit !important;
-            display: flex !important;
-            justify-content: center !important;
-          }
-          
-          .property-carousel-container .slick-slide > div {
+        /* ensure slider's list doesn't add extra paddings or show partial slides on mobile */
+        .property-carousel-container .slick-list {
+          padding: 0;
+          margin: 0;
+          overflow: hidden;
+        }
+
+        .property-carousel-container .slick-track {
+          display: flex !important;
+          align-items: stretch;
+        }
+
+        .property-carousel-container .slick-slide {
+          display: flex !important;
+          justify-content: center !important;
+          align-items: stretch;
+          height: auto !important;
+        }
+
+        /* wrapper inside the slide (the Box with class property-slide) */
+        .property-slide {
+          width: 100% !important; /* take full width on small screens */
+          max-width: 360px; /* on larger screens cards won't explode */
+        }
+
+        /* larger screens: allow multiple cards to appear, up to max-width */
+        @media (min-width: 768px) {
+          .property-slide {
             width: 100% !important;
-            display: flex !important;
-            justify-content: center !important;
+            max-width: 320px;
           }
+        }
+
+        /* override slick inline widths that sometimes cause peeking */
+        .property-carousel-container .slick-slide > div {
+          width: 100% !important;
+          display: flex !important;
+          justify-content: center !important;
         }
       `}</style>
     </Box>
