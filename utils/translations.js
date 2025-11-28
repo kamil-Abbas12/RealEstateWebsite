@@ -19,7 +19,7 @@ const translations = {
     filters: {
       buy: "Buy",
       rent: "Rent",
-      city: "City or Area",
+      city: "Country or City or Area",
       minPrice: "Min Price",
       maxPrice: "Max Price",
       minBeds: "Min Beds",

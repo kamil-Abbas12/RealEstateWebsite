@@ -40,3 +40,21 @@ a {
     color-scheme: dark;
   }
 }
+.slick-slider,
+.slick-list,
+.slick-track {
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+.slick-track {
+  display: flex !important;
+}
+
+.slick-slide {
+  height: inherit !important;
+}
+
+.slick-slide > div {
+  height: 100%;
+}

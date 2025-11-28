@@ -5,7 +5,10 @@ import {
   VStack, HStack, Heading, Textarea, Grid, GridItem,
   Image, IconButton, Badge, useToast, Text, RadioGroup, Radio,
   Progress, FormHelperText, Modal, ModalOverlay, ModalContent,
-  ModalHeader, ModalBody, ModalFooter, ModalCloseButton, useDisclosure
+  ModalHeader, ModalBody, ModalFooter, ModalCloseButton, useDisclosure,
+  Wrap,
+  WrapItem,
+  Stack
 } from "@chakra-ui/react";
 import { CloseIcon } from "@chakra-ui/icons";
 import axios from "axios";
@@ -293,14 +296,29 @@ export default function PropertyForm({ onSuccess } = {}) {
 
   return (
     <Box bg="white" p={6} borderRadius="md" boxShadow="lg" maxW="900px" mx="auto">
-      <Heading size="lg" mb={3}>Create Listing — Step {step} of 4</Heading>
+      <Heading 
+  size={{ base: "md", md: "lg" }} 
+  mb={3} 
+  textAlign={{ base: "center", md: "left" }}
+>
+  Create Listing — Step {step} of 4
+</Heading>
 
-      <HStack spacing={3} mb={4}>
-        <Badge colorScheme={step >= 1 ? "teal" : "gray"}>1. Details</Badge>
-        <Badge colorScheme={step >= 2 ? "teal" : "gray"}>2. Images</Badge>
-        <Badge colorScheme={step >= 3 ? "teal" : "gray"}>3. Amenities</Badge>
-        <Badge colorScheme={step >= 4 ? "teal" : "gray"}>4. Payment</Badge>
-      </HStack>
+<Wrap spacing={3} mb={4} justify={{ base: "left", md: "flex-start" }}>
+  <WrapItem>
+    <Badge colorScheme={step >= 1 ? "teal" : "gray"}>1. Details</Badge>
+  </WrapItem>
+  <WrapItem>
+    <Badge colorScheme={step >= 2 ? "teal" : "gray"}>2. Images</Badge>
+  </WrapItem>
+  <WrapItem>
+    <Badge colorScheme={step >= 3 ? "teal" : "gray"}>3. Amenities</Badge>
+  </WrapItem>
+  <WrapItem>
+    <Badge colorScheme={step >= 4 ? "teal" : "gray"}>4. Payment</Badge>
+  </WrapItem>
+</Wrap>
+
 
       <VStack align="stretch" spacing={5}>
         {/* STEP 1 - Details */}
@@ -484,78 +502,180 @@ export default function PropertyForm({ onSuccess } = {}) {
             </Box>
 
             {/* PREMIUM OPTION SELECTION */}
-            <Box mt={6} p={5} border="2px solid" borderColor="teal.400" borderRadius="md" bg="white">
-              <Heading size="sm" mb={4}>📋 Select Your Listing Type:</Heading>
-              
-              <RadioGroup onChange={(val) => setListingFee(Number(val))} value={listingFee}>
-                <VStack align="stretch" spacing={4}>
-                  <Box
-                    p={4}
-                    border="2px solid"
-                    borderColor={listingFee === 5 ? "teal.500" : "gray.200"}
-                    borderRadius="md"
-                    bg={listingFee === 5 ? "teal.50" : "white"}
-                    cursor="pointer"
-                    onClick={() => setListingFee(5)}
-                  >
-                    <Radio value={5} size="lg">
-                      <VStack align="start" spacing={1} ml={2}>
-                        <Text fontWeight="bold" fontSize="lg">Standard Listing - $5</Text>
-                        <Text fontSize="sm" color="gray.600">
-                          Your property appears in regular listings
-                        </Text>
-                      </VStack>
-                    </Radio>
-                  </Box>
+           <Box
+  mt={6}
+  p={{ base: 4, md: 5 }}
+  border="2px solid"
+  borderColor="teal.400"
+  borderRadius="md"
+  bg="white"
+  w="100%"
+>
+  <Heading
+    size={{ base: "sm", md: "md" }}
+    mb={4}
+    textAlign={{ base: "center", md: "left" }}
+  >
+    📋 Select Your Listing Type:
+  </Heading>
 
-                  <Box
-                    p={4}
-                    border="2px solid"
-                    borderColor={listingFee === 15 ? "yellow.500" : "gray.200"}
-                    borderRadius="md"
-                    bg={listingFee === 15 ? "yellow.50" : "white"}
-                    cursor="pointer"
-                    onClick={() => setListingFee(15)}
-                  >
-                    <Radio value={15} size="lg">
-                      <VStack align="start" spacing={1} ml={2}>
-                        <HStack>
-                          <Text fontWeight="bold" fontSize="lg">Premium Listing - $15</Text>
-                          <Badge colorScheme="yellow" fontSize="sm">⭐ FEATURED</Badge>
-                        </HStack>
-                        <Text fontSize="sm" color="gray.600">
-                          🚀 Your property appears at the TOP of all search results
-                        </Text>
-                        <Text fontSize="xs" color="green.600" fontWeight="semibold">
-                          ✓ 3x more visibility • ✓ Sell/Rent faster
-                        </Text>
-                      </VStack>
-                    </Radio>
-                  </Box>
-                </VStack>
-              </RadioGroup>
+  <RadioGroup
+    onChange={(val) => setListingFee(Number(val))}
+    value={listingFee}
+    w="100%"
+  >
+    <VStack align="stretch" spacing={4} w="100%">
+      {/* STANDARD LISTING */}
+      <Box
+        p={{ base: 3, md: 4 }}
+        border="2px solid"
+        borderColor={listingFee === 5 ? "teal.500" : "gray.200"}
+        borderRadius="md"
+        bg={listingFee === 5 ? "teal.50" : "white"}
+        cursor="pointer"
+        onClick={() => setListingFee(5)}
+        w="100%"
+      >
+        <Radio value={5} size="lg" w="100%">
+          <VStack
+            align="start"
+            spacing={1}
+            ml={{ base: 1, md: 2 }}
+            w="100%"
+          >
+            <Text
+              fontWeight="bold"
+              fontSize={{ base: "md", md: "lg" }}
+            >
+              Standard Listing - $5
+            </Text>
 
-              <Button
-                colorScheme="teal"
-                size="lg"
-                w="full"
-                mt={5}
-                onClick={handleProceedToPayment}
-                isLoading={processing}
-                leftIcon={<Text>💳</Text>}
+            <Text
+              fontSize={{ base: "xs", md: "sm" }}
+              color="gray.600"
+              pr={2}
+            >
+              Your property appears in regular listings
+            </Text>
+          </VStack>
+        </Radio>
+      </Box>
+
+      {/* PREMIUM LISTING */}
+      <Box
+        p={{ base: 3, md: 4 }}
+        border="2px solid"
+        borderColor={listingFee === 15 ? "yellow.500" : "gray.200"}
+        borderRadius="md"
+        bg={listingFee === 15 ? "yellow.50" : "white"}
+        cursor="pointer"
+        onClick={() => setListingFee(15)}
+        w="100%"
+      >
+        <Radio value={15} size="lg" w="100%">
+          <VStack
+            align="start"
+            spacing={1}
+            ml={{ base: 1, md: 2 }}
+            w="100%"
+          >
+            {/* TITLE + BADGE */}
+            <Stack
+              direction={{ base: "column", sm: "row" }}
+              spacing={{ base: 0, sm: 2 }}
+              align="start"
+              w="100%"
+            >
+              <Text
+                fontWeight="bold"
+                fontSize={{ base: "md", md: "lg" }}
+                wordBreak="break-word"
               >
-                Proceed to Payment - ${listingFee}
-              </Button>
-            </Box>
+                Premium Listing - $15
+              </Text>
+
+              <Badge
+                colorScheme="yellow"
+                fontSize={{ base: "xs", md: "sm" }}
+                w="fit-content"
+              >
+                ⭐ FEATURED
+              </Badge>
+            </Stack>
+
+            <Text
+              fontSize={{ base: "xs", md: "sm" }}
+              color="gray.600"
+              pr={2}
+            >
+              🚀 Your property appears at the TOP of all search results
+            </Text>
+
+            <Text
+              fontSize={{ base: "xs", md: "sm" }}
+              color="green.600"
+              fontWeight="semibold"
+            >
+              ✓ 3x more visibility • ✓ Sell/Rent faster
+            </Text>
+          </VStack>
+        </Radio>
+      </Box>
+    </VStack>
+  </RadioGroup>
+
+  {/* PROCEED BUTTON */}
+ <Button
+  colorScheme="teal"
+  w="100%"
+  mt={5}
+  onClick={handleProceedToPayment}
+  isLoading={processing}
+  leftIcon={<Text>💳</Text>}
+  py={{ base: 4, md: 6 }}
+  fontSize={{ base: "xs", sm: "sm", md: "md" }}
+  whiteSpace="normal"
+  textAlign="center"
+  lineHeight="1.2"
+>
+  Proceed to Payment — ${listingFee}
+</Button>
+
+</Box>
+
           </>
         )}
 
         {/* Navigation */}
-        <HStack spacing={3} justify="flex-end" mt={4}>
-          {step > 1 && step < 4 && <Button variant="outline" onClick={prevStep}>Back</Button>}
-          {step < 3 && <Button colorScheme="teal" onClick={nextStep}>Next</Button>}
-          {step === 3 && <Button colorScheme="teal" onClick={handleSaveProperty} isLoading={processing}>Save & Continue</Button>}
-        </HStack>
+     <Wrap spacing={3} justify={{ base: "center", md: "flex-end" }} mt={4}>
+  {step > 1 && step < 4 && (
+    <WrapItem>
+      <Button variant="outline" onClick={prevStep}>
+        Back
+      </Button>
+    </WrapItem>
+  )}
+  {step < 3 && (
+    <WrapItem>
+      <Button colorScheme="teal" onClick={nextStep}>
+        Next
+      </Button>
+    </WrapItem>
+  )}
+  {step === 3 && (
+    <WrapItem>
+      <Button
+        colorScheme="teal"
+        onClick={handleSaveProperty}
+        isLoading={processing}
+        whiteSpace="normal"
+        wordBreak="break-word"
+      >
+        Save & Continue
+      </Button>
+    </WrapItem>
+  )}
+</Wrap>
 
       </VStack>
 

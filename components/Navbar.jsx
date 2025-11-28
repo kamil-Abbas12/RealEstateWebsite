@@ -1,6 +1,7 @@
 "use client";
 import NextLink from "next/link";
 import { useSession, signOut } from "next-auth/react";
+import { Portal } from "@chakra-ui/react";
 
 import {
   Menu, MenuButton, MenuList, MenuItem, IconButton,
@@ -178,40 +179,49 @@ export const Navbar = () => {
 
         {/* Hamburger Menu */}
         <Menu>
-          <MenuButton as={IconButton} icon={<FcMenu />} variant="outline" aria-label="Menu" size="md" bg="white" />
-          <MenuList>
-            <MenuItem onClick={() => router.push("/")}>
-              <FcHome style={{ marginRight: 8 }} /> {t("nav.home")}
-            </MenuItem>
-            <MenuItem onClick={() => router.push("/search?listing_status=sale")}>
-              <FcAbout style={{ marginRight: 8 }} /> {t("nav.buy")}
-            </MenuItem>
-            <MenuItem onClick={() => router.push("/search?listing_status=rent")}>
-              <FiKey style={{ marginRight: 8 }} /> {t("nav.rent")}
-            </MenuItem>
-            <MenuItem onClick={() => router.push("/dashboard")}>
-              <FiKey style={{ marginRight: 8 }} /> {t("nav.dashboard")}
-            </MenuItem>
+  <MenuButton
+    as={IconButton}
+    icon={<FcMenu />}
+    variant="outline"
+    aria-label="Menu"
+    size="md"
+    bg="white"
+  />
+  <Portal>
+    <MenuList zIndex={3000}>
+      <MenuItem onClick={() => router.push("/")}>
+        <FcHome style={{ marginRight: 8 }} /> {t("nav.home")}
+      </MenuItem>
+      <MenuItem onClick={() => router.push("/search?listing_status=sale")}>
+        <FcAbout style={{ marginRight: 8 }} /> {t("nav.buy")}
+      </MenuItem>
+      <MenuItem onClick={() => router.push("/search?listing_status=rent")}>
+        <FiKey style={{ marginRight: 8 }} /> {t("nav.rent")}
+      </MenuItem>
+      <MenuItem onClick={() => router.push("/dashboard")}>
+        <FiKey style={{ marginRight: 8 }} /> {t("nav.dashboard")}
+      </MenuItem>
 
-            {/* Mobile Blog Menu */}
-            <MenuItem onClick={() => router.push("/blog/grid")}>Blog Grid</MenuItem>
-            <MenuItem onClick={() => router.push("/blog/list")}>Blog List</MenuItem>
-            <MenuItem onClick={() => router.push("/blog")}>Latest Blog</MenuItem>
+      <MenuItem onClick={() => router.push("/blog/grid")}>Blog Grid</MenuItem>
+      <MenuItem onClick={() => router.push("/blog/list")}>Blog List</MenuItem>
+      <MenuItem onClick={() => router.push("/blog")}>Latest Blog</MenuItem>
 
-            <MenuItem onClick={handleAddProperty}>
-              <FiPlus style={{ marginRight: 8 }} /> Add Property
-            </MenuItem>
-            <MenuItem onClick={() => router.push("/properties")}>
-              <FiKey style={{ marginRight: 8 }} /> {t("nav.properties")}
-            </MenuItem>
+      <MenuItem onClick={handleAddProperty}>
+        <FiPlus style={{ marginRight: 8 }} /> Add Property
+      </MenuItem>
+      <MenuItem onClick={() => router.push("/properties")}>
+        <FiKey style={{ marginRight: 8 }} /> {t("nav.properties")}
+      </MenuItem>
 
-            {isLoggedIn && user ? (
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
-            ) : (
-              <MenuItem onClick={() => router.push("/login")}>Login</MenuItem>
-            )}
-          </MenuList>
-        </Menu>
+      {isLoggedIn && user ? (
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      ) : (
+        <MenuItem onClick={() => router.push("/login")}>Login</MenuItem>
+      )}
+    </MenuList>
+  </Portal>
+</Menu>
+
       </Flex>
     </Flex>
   );
