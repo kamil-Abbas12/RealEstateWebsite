@@ -47,17 +47,36 @@ export default function PropertyCarousel() {
 
   let sliderRef;
 
-  const settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 5,
-    slidesToScroll: 1,
-    responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 2 } },
-      { breakpoint: 640, settings: { slidesToShow: 1 } },
-    ],
-  };
+ const settings = {
+  dots: false,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 4,  // Changed from 5 to 4 for desktop
+  slidesToScroll: 1,
+  responsive: [
+    { 
+      breakpoint: 1280,  // Large desktop
+      settings: { slidesToShow: 4 } 
+    },
+    { 
+      breakpoint: 1024,  // Tablet/small laptop
+      settings: { slidesToShow: 3 } 
+    },
+    { 
+      breakpoint: 768,   // Tablet portrait
+      settings: { slidesToShow: 2 } 
+    },
+    { 
+      breakpoint: 640,   // Mobile landscape
+      settings: { slidesToShow: 1 } 
+    },
+    { 
+      breakpoint: 480,   // Mobile portrait - ADD THIS
+      settings: { slidesToShow: 1 } 
+    },
+  ],
+};
+
 
   return (
     <Box position="relative" w="100%" py={10} px={{ base: 4, md: 10 }}>
