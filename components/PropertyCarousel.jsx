@@ -1,8 +1,10 @@
+// components/PropertyCarousel.jsx
 "use client";
 
-import { Box, Flex, Heading, IconButton, Image, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, IconButton, Text } from "@chakra-ui/react";
 import { useState, useEffect, useRef } from "react";
 import Slider from "react-slick";
+import Image from "next/image";
 import { FaHeart, FaRegHeart, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useRouter } from "next/router";
 import translations from "@/utils/translations";
@@ -13,7 +15,6 @@ import "slick-carousel/slick/slick-theme.css";
 export default function PropertyCarousel() {
   const router = useRouter();
   const locale = router?.locale || "en";
-
   const t = (path) => {
     const parts = path.split(".");
     let cur = translations[locale] || translations.en;
@@ -28,9 +29,6 @@ export default function PropertyCarousel() {
   const [properties, setProperties] = useState([]);
   const sliderRef = useRef(null);
 
-  const toggleLike = (id) =>
-    setLiked((prev) => ({ ...prev, [id]: !prev[id] }));
-
   useEffect(() => {
     async function fetchPremium() {
       try {
@@ -41,9 +39,10 @@ export default function PropertyCarousel() {
         console.error("Failed to load premium properties", err);
       }
     }
-
     fetchPremium();
   }, []);
+
+  const toggleLike = (id) => setLiked((prev) => ({ ...prev, [id]: !prev[id] }));
 
   const settings = {
     dots: false,
@@ -53,6 +52,8 @@ export default function PropertyCarousel() {
     slidesToScroll: 1,
     adaptiveHeight: true,
     swipeToSlide: true,
+    variableWidth: false,
+    centerMode: false,
     responsive: [
       { breakpoint: 1024, settings: { slidesToShow: 3 } },
       { breakpoint: 768, settings: { slidesToShow: 2 } },
@@ -62,7 +63,6 @@ export default function PropertyCarousel() {
 
   return (
     <Box position="relative" w="100%" py={10} px={{ base: 4, md: 10 }}>
-      {/* Header */}
       <Flex justify="space-between" align="center" mb={6}>
         <Heading color="white" fontSize={{ base: "xl", md: "2xl" }}>
           {t("carousel.title")}
@@ -72,7 +72,6 @@ export default function PropertyCarousel() {
             aria-label="Previous"
             icon={<FaChevronLeft />}
             onClick={() => sliderRef.current?.slickPrev()}
-            colorScheme="whiteAlpha"
             variant="outline"
             size={{ base: "sm", md: "md" }}
           />
@@ -80,14 +79,12 @@ export default function PropertyCarousel() {
             aria-label="Next"
             icon={<FaChevronRight />}
             onClick={() => sliderRef.current?.slickNext()}
-            colorScheme="whiteAlpha"
             variant="outline"
             size={{ base: "sm", md: "md" }}
           />
         </Flex>
       </Flex>
 
-      {/* Carousel */}
       <Box className="property-carousel-container">
         <Slider ref={sliderRef} {...settings}>
           {properties.map((p) => (
@@ -103,20 +100,22 @@ export default function PropertyCarousel() {
                 transition="all 0.3s ease"
                 onClick={() => router.push(`/property/${p._id}`)}
               >
-                <Image
-                  src={p.coverPhoto || "/placeholder.jpg"}
-                  alt={p.price}
-                  w="100%"
-                  h={{ base: "220px", md: "250px" }}
-                  objectFit="cover"
-                />
+                {/* wrapper with fixed height so next/image fill works predictably */}
+                <Box position="relative" width="100%" height={{ base: "220px", md: "250px" }}>
+                  <Image
+                    src={p.coverPhoto || "/placeholder.jpg"}
+                    alt={String(p.price)}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width:1024px) 50vw, 33vw"
+                    style={{ objectFit: "cover" }}
+                    priority={false}
+                  />
+                </Box>
 
                 <Box position="absolute" top="3" right="3" zIndex="2">
                   <IconButton
                     aria-label="Like"
-                    icon={
-                      liked[p._id] ? <FaHeart color="red" /> : <FaRegHeart color="white" />
-                    }
+                    icon={liked[p._id] ? <FaHeart color="red" /> : <FaRegHeart color="white" />}
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleLike(p._id);
@@ -145,8 +144,8 @@ export default function PropertyCarousel() {
         </Slider>
       </Box>
 
-      {/* Global CSS overrides */}
       <style jsx global>{`
+        /* keep slick flexible and let it handle mobile naturally */
         .property-carousel-container .slick-list {
           overflow: hidden;
         }
@@ -161,8 +160,11 @@ export default function PropertyCarousel() {
           justify-content: center;
           align-items: stretch;
           height: auto !important;
+          box-sizing: border-box;
+          padding: 0 !important;
         }
 
+        /* ensure slide content fills available width on mobile */
         .property-carousel-container .slick-slide > div {
           width: 100% !important;
           display: flex;
@@ -171,13 +173,7 @@ export default function PropertyCarousel() {
 
         .property-slide {
           width: 100% !important;
-          max-width: 360px;
-        }
-
-        @media (min-width: 768px) {
-          .property-slide {
-            max-width: 320px;
-          }
+          max-width: none !important; /* remove fixed caps */
         }
       `}</style>
     </Box>
