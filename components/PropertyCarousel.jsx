@@ -44,22 +44,21 @@ export default function PropertyCarousel() {
 
   const toggleLike = (id) => setLiked((prev) => ({ ...prev, [id]: !prev[id] }));
 
-  const settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    adaptiveHeight: true,
-    swipeToSlide: true,
-    variableWidth: false,
-    centerMode: false,
-    responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 3 } },
-      { breakpoint: 768, settings: { slidesToShow: 2 } },
-      { breakpoint: 640, settings: { slidesToShow: 1 } },
-    ],
-  };
+ const settings = {
+  dots: false,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 4,
+  slidesToScroll: 1,
+  swipeToSlide: true,
+  adaptiveHeight: true,
+  responsive: [
+    { breakpoint: 1024, settings: { slidesToShow: 3 } },
+    { breakpoint: 768, settings: { slidesToShow: 2 } },
+    { breakpoint: 640, settings: { slidesToShow: 1 } }, // <-- 1 slide on mobile
+  ],
+};
+
 
   return (
     <Box position="relative" w="100%" py={10} px={{ base: 4, md: 10 }}>
@@ -88,7 +87,7 @@ export default function PropertyCarousel() {
       <Box className="property-carousel-container">
         <Slider ref={sliderRef} {...settings}>
           {properties.map((p) => (
-            <Box key={p._id} className="property-slide" px={2}>
+            <Box key={p._id} className="property-slide" >
               <Box
                 position="relative"
                 borderRadius="2xl"
@@ -145,36 +144,51 @@ export default function PropertyCarousel() {
       </Box>
 
       <style jsx global>{`
-        /* keep slick flexible and let it handle mobile naturally */
-        .property-carousel-container .slick-list {
-          overflow: hidden;
-        }
+    /* slick carousel container */
+.property-carousel-container .slick-list {
+  overflow: hidden;
+}
 
-        .property-carousel-container .slick-track {
-          display: flex !important;
-          align-items: stretch;
-        }
+/* track must be flex always */
+.property-carousel-container .slick-track {
+  display: flex !important;
+  align-items: stretch;
+}
 
-        .property-carousel-container .slick-slide {
-          display: flex !important;
-          justify-content: center;
-          align-items: stretch;
-          height: auto !important;
-          box-sizing: border-box;
-          padding: 0 !important;
-        }
+/* slides fill width properly */
+.property-carousel-container .slick-slide {
+  display: flex !important;
+  justify-content: center;
+  align-items: stretch;
+  height: auto !important;
+  box-sizing: border-box;
+  padding: 0 !important;
+}
 
-        /* ensure slide content fills available width on mobile */
-        .property-carousel-container .slick-slide > div {
-          width: 100% !important;
-          display: flex;
-          justify-content: center;
-        }
+/* slide content fills parent */
+.property-carousel-container .slick-slide > div {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: flex;
+  flex-direction: column;
+}
 
-        .property-slide {
-          width: 100% !important;
-          max-width: none !important; /* remove fixed caps */
-        }
+/* override padding on slide wrapper */
+.property-slide {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+}
+
+/* mobile override */
+@media (max-width: 640px) {
+  .property-slide,
+  .property-carousel-container .slick-slide > div {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
       `}</style>
     </Box>
   );

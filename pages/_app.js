@@ -9,6 +9,8 @@ import Layout from "../components/Layout";
 import ScrollToTop from "@/components/ScrollToTop";
 import { useEffect } from "react";
 import "leaflet/dist/leaflet.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 // Initialize nProgress
 Router.events.on("routeChangeStart", () => nProgress.start());
