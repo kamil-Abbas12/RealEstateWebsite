@@ -49,21 +49,13 @@ export default function PropertyCarousel() {
     dots: true,
     infinite: properties.length > 1,
     speed: 500,
-    slidesToShow: 1,
+    slidesToShow: 4,
     slidesToScroll: 1,
     arrows: false,
     swipeToSlide: true,
     touchThreshold: 10,
     cssEase: "ease-in-out",
     responsive: [
-      { 
-        breakpoint: 9999, // Desktop
-        settings: { 
-          slidesToShow: 4,
-          slidesToScroll: 1,
-          dots: false
-        } 
-      },
       { 
         breakpoint: 1280, 
         settings: { 
@@ -73,7 +65,7 @@ export default function PropertyCarousel() {
         } 
       },
       { 
-        breakpoint: 768, 
+        breakpoint: 900, 
         settings: { 
           slidesToShow: 2,
           slidesToScroll: 1,
@@ -86,7 +78,8 @@ export default function PropertyCarousel() {
           slidesToShow: 1,
           slidesToScroll: 1,
           dots: true,
-          centerMode: false
+          centerMode: false,
+          variableWidth: false
         } 
       },
     ],
@@ -112,7 +105,6 @@ export default function PropertyCarousel() {
             colorScheme="whiteAlpha"
             variant="outline"
             size={{ base: "sm", md: "md" }}
-            display={{ base: "flex", md: "flex" }}
           />
           <IconButton
             aria-label="Next"
@@ -121,7 +113,6 @@ export default function PropertyCarousel() {
             colorScheme="whiteAlpha"
             variant="outline"
             size={{ base: "sm", md: "md" }}
-            display={{ base: "flex", md: "flex" }}
           />
         </Flex>
       </Flex>
@@ -133,8 +124,9 @@ export default function PropertyCarousel() {
       >
         <Slider ref={sliderRef} {...settings}>
           {properties.map((p) => (
-            <Box key={p._id} px={{ base: 0, md: 2 }}>
+            <Box key={p._id} className="property-slide-container">
               <Box
+                className="property-card"
                 position="relative"
                 borderRadius="2xl"
                 overflow="hidden"
@@ -144,8 +136,6 @@ export default function PropertyCarousel() {
                 _hover={{ transform: "scale(1.02)" }}
                 transition="all 0.3s ease"
                 onClick={() => router.push(`/property/${p._id}`)}
-                mx={{ base: 0, md: "auto" }}
-                maxW={{ base: "100%", md: "350px" }}
               >
                 <Image
                   src={p.coverPhoto || "/placeholder.jpg"}
@@ -191,7 +181,7 @@ export default function PropertyCarousel() {
 
       {/* Scoped styles */}
       <style jsx global>{`
-        /* Reset any conflicting styles */
+        /* Carousel wrapper */
         .property-carousel-wrapper {
           width: 100%;
           overflow: hidden;
@@ -203,7 +193,6 @@ export default function PropertyCarousel() {
           box-sizing: border-box;
           user-select: none;
           touch-action: pan-y;
-          -webkit-tap-highlight-color: transparent;
         }
 
         .property-carousel-wrapper .slick-list {
@@ -218,50 +207,60 @@ export default function PropertyCarousel() {
           position: relative;
           top: 0;
           left: 0;
-          display: flex;
-          margin-left: auto;
-          margin-right: auto;
+          display: flex !important;
+          align-items: stretch;
         }
 
         .property-carousel-wrapper .slick-slide {
-          float: left;
-          height: 100%;
-          min-height: 1px;
-          display: block;
+          height: auto;
+          display: flex !important;
         }
 
         .property-carousel-wrapper .slick-slide > div {
-          height: 100%;
+          width: 100%;
+          display: flex;
         }
 
-        /* Mobile specific - ONE property only */
+        /* Slide container with padding */
+        .property-slide-container {
+          padding: 0 8px;
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        .property-card {
+          width: 100%;
+          max-width: 350px;
+          margin: 0 auto;
+        }
+
+        /* Mobile - 1 property, NO peeking */
         @media (max-width: 640px) {
-          .property-carousel-wrapper .slick-track {
-            display: flex !important;
-          }
-
-          .property-carousel-wrapper .slick-slide {
-            width: 100vw !important;
-            max-width: calc(100vw - 32px);
-            margin: 0;
-          }
-
           .property-carousel-wrapper .slick-list {
-            overflow: visible;
+            overflow: hidden !important;
+            padding: 0 !important;
+          }
+
+          .property-slide-container {
+            padding: 0 !important;
+          }
+
+          .property-card {
+            max-width: 100%;
           }
         }
 
-        /* Tablet - TWO properties */
-        @media (min-width: 641px) and (max-width: 768px) {
-          .property-carousel-wrapper .slick-slide {
-            width: 50% !important;
+        /* Tablet - 2 properties */
+        @media (min-width: 641px) and (max-width: 900px) {
+          .property-card {
+            max-width: 100%;
           }
         }
 
-        /* Desktop - FOUR properties */
-        @media (min-width: 769px) {
-          .property-carousel-wrapper .slick-slide {
-            width: 25% !important;
+        /* Desktop - 3-4 properties */
+        @media (min-width: 901px) {
+          .property-card {
+            max-width: 350px;
           }
         }
 
@@ -309,8 +308,8 @@ export default function PropertyCarousel() {
           display: none;
         }
 
-        /* Hide dots on desktop */
-        @media (min-width: 769px) {
+        /* Hide dots on larger screens */
+        @media (min-width: 1024px) {
           .property-carousel-wrapper .slick-dots {
             display: none !important;
           }
