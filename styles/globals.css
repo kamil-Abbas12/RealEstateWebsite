@@ -22,6 +22,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden !important;
 }
 
 * {
@@ -41,41 +42,28 @@ a {
   }
 }
 
-
-.slick-slider,
-.slick-list,
-.slick-track {
+/* Slick Carousel Base Styles */
+.slick-slider {
   touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
 }
 
-/* Important: Slick needs flex */
+.slick-list {
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
 .slick-track {
   display: flex !important;
+  touch-action: pan-y;
 }
 
-/* Keep slides full width on mobile */
-@media (max-width: 768px) {
-  .slick-slide {
-    width: 100% !important;
-  }
-
-  .slick-slide > div {
-    width: 100% !important;
-  }
-}
-
+/* Remove conflicting global styles */
 .slick-slide {
   height: inherit !important;
   box-sizing: border-box;
-  float: none !important;
 }
 
 .slick-slide > div {
   height: 100%;
-  width: 100%;
-}
-
-body {
-  overflow-x: hidden !important;
 }

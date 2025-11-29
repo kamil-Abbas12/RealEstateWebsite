@@ -46,35 +46,59 @@ export default function PropertyCarousel() {
   }, []);
 
   const settings = {
-    dots: false,
+    dots: true,
     infinite: true,
     speed: 500,
     slidesToShow: 4,
     slidesToScroll: 1,
-    adaptiveHeight: true,
+    arrows: false,
     swipeToSlide: true,
+    touchThreshold: 10,
     responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 3 } },
-      { breakpoint: 768, settings: { slidesToShow: 2 } },
-      { breakpoint: 640, settings: { slidesToShow: 1 } },
+      { 
+        breakpoint: 1024, 
+        settings: { 
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          dots: true
+        } 
+      },
+      { 
+        breakpoint: 768, 
+        settings: { 
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          dots: true
+        } 
+      },
+      { 
+        breakpoint: 640, 
+        settings: { 
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          dots: true,
+          centerMode: false,
+          variableWidth: false
+        } 
+      },
     ],
   };
 
   return (
     <Box position="relative" w="100%" py={10} px={{ base: 4, md: 10 }}>
       {/* Header */}
-      <Flex justify="space-between" align="center" mb={6}>
+      <Flex justify="space-between" align="center" mb={6} px={{ base: 2, md: 0 }}>
         <Heading color="white" fontSize={{ base: "xl", md: "2xl" }}>
           {t("carousel.title")}
         </Heading>
-        <Flex gap={2}>
+        <Flex gap={2} display={{ base: "none", md: "flex" }}>
           <IconButton
             aria-label="Previous"
             icon={<FaChevronLeft />}
             onClick={() => sliderRef.current?.slickPrev()}
             colorScheme="whiteAlpha"
             variant="outline"
-            size={{ base: "sm", md: "md" }}
+            size="md"
           />
           <IconButton
             aria-label="Next"
@@ -82,7 +106,7 @@ export default function PropertyCarousel() {
             onClick={() => sliderRef.current?.slickNext()}
             colorScheme="whiteAlpha"
             variant="outline"
-            size={{ base: "sm", md: "md" }}
+            size="md"
           />
         </Flex>
       </Flex>
@@ -91,7 +115,7 @@ export default function PropertyCarousel() {
       <Box className="property-carousel-container">
         <Slider ref={sliderRef} {...settings}>
           {properties.map((p) => (
-            <Box key={p._id} className="property-slide" px={2}>
+            <Box key={p._id} className="property-slide" px={{ base: 2, md: 2 }}>
               <Box
                 position="relative"
                 borderRadius="2xl"
@@ -102,12 +126,14 @@ export default function PropertyCarousel() {
                 _hover={{ transform: "scale(1.02)" }}
                 transition="all 0.3s ease"
                 onClick={() => router.push(`/property/${p._id}`)}
+                mx="auto"
+                maxW={{ base: "100%", md: "320px" }}
               >
                 <Image
                   src={p.coverPhoto || "/placeholder.jpg"}
                   alt={p.price}
                   w="100%"
-                  h={{ base: "220px", md: "250px" }}
+                  h={{ base: "240px", md: "250px" }}
                   objectFit="cover"
                 />
 
@@ -132,10 +158,10 @@ export default function PropertyCarousel() {
                   <Text color="goldenrod" fontWeight="bold" fontSize="lg">
                     ${p.price?.toLocaleString()}
                   </Text>
-                  <Text color="gray.900" fontSize="sm">
+                  <Text color="gray.900" fontSize="sm" mt={1}>
                     {p.area || p.size || "—"} sq ft
                   </Text>
-                  <Text color="gray.700" fontSize="xs" noOfLines={1}>
+                  <Text color="gray.700" fontSize="xs" noOfLines={1} mt={1}>
                     {p.location || ""}
                   </Text>
                 </Box>
@@ -147,8 +173,14 @@ export default function PropertyCarousel() {
 
       {/* Global CSS overrides */}
       <style jsx global>{`
+        .property-carousel-container {
+          width: 100%;
+          margin: 0 auto;
+        }
+
         .property-carousel-container .slick-list {
           overflow: hidden;
+          margin: 0 -8px;
         }
 
         .property-carousel-container .slick-track {
@@ -161,23 +193,58 @@ export default function PropertyCarousel() {
           justify-content: center;
           align-items: stretch;
           height: auto !important;
+          float: none !important;
         }
 
         .property-carousel-container .slick-slide > div {
-          width: 100% !important;
+          width: 100%;
           display: flex;
           justify-content: center;
         }
 
-        .property-slide {
-          width: 100% !important;
-          max-width: 360px;
+        /* Mobile: ONE property per slide */
+        @media (max-width: 640px) {
+          .property-carousel-container .slick-list {
+            margin: 0;
+            padding: 0 !important;
+          }
+
+          .property-carousel-container .slick-slide {
+            width: 100% !important;
+            padding: 0 8px;
+          }
+
+          .property-carousel-container .slick-slide > div {
+            width: 100% !important;
+          }
+
+          .property-slide {
+            width: 100% !important;
+            max-width: 100% !important;
+          }
         }
 
-        @media (min-width: 768px) {
+        /* Tablet and up */
+        @media (min-width: 641px) {
           .property-slide {
             max-width: 320px;
           }
+        }
+
+        /* Dots styling */
+        .property-carousel-container .slick-dots {
+          bottom: -35px;
+        }
+
+        .property-carousel-container .slick-dots li button:before {
+          color: white;
+          opacity: 0.5;
+          font-size: 8px;
+        }
+
+        .property-carousel-container .slick-dots li.slick-active button:before {
+          color: goldenrod;
+          opacity: 1;
         }
       `}</style>
     </Box>
