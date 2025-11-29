@@ -41,29 +41,3 @@ a {
     color-scheme: dark;
   }
 }
-
-/* Slick Carousel Base Styles */
-.slick-slider {
-  touch-action: pan-y;
-  -webkit-overflow-scrolling: touch;
-}
-
-.slick-list {
-  touch-action: pan-y;
-  -webkit-overflow-scrolling: touch;
-}
-
-.slick-track {
-  display: flex !important;
-  touch-action: pan-y;
-}
-
-/* Remove conflicting global styles */
-.slick-slide {
-  height: inherit !important;
-  box-sizing: border-box;
-}
-
-.slick-slide > div {
-  height: 100%;
-}
