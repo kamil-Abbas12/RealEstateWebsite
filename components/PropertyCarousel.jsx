@@ -87,7 +87,7 @@ export default function PropertyCarousel() {
       <Box className="property-carousel-container">
         <Slider ref={sliderRef} {...settings}>
           {properties.map((p) => (
-            <Box key={p._id} className="property-slide" >
+            <Box key={p._id} className="property-slide" px={2}>
               <Box
                 position="relative"
                 borderRadius="2xl"
