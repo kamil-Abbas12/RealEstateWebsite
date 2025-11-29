@@ -50,10 +50,22 @@ a {
   touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
 }
-
+/* Let SLICK handle track layout */
 .slick-track {
-  display: flex !important;
+  display: block !important;
 }
+
+/* Keep slides full width on mobile */
+@media (max-width: 768px) {
+  .slick-slide {
+    width: 100% !important;
+  }
+
+  .slick-slide > div {
+    width: 100% !important;
+  }
+}
+
 
 .slick-slide {
   height: inherit !important;
@@ -73,4 +85,7 @@ a {
 
 .slick-slide > div {
   height: 100%;
+}
+body {
+  overflow-x: hidden !important;
 }

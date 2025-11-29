@@ -30,7 +30,7 @@ const Home = () => {
         marginY={{ base: "30px", md: "60px" }}
         justify="center"
         alignItems="center"
-        mx={{ base: "20px", md: "90px" }}
+px={{ base: 0, md: 4 }}
       >
         <PropertyCarousel />
       </Flex>
