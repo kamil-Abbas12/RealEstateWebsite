@@ -1,10 +1,8 @@
-// components/PropertyCarousel.jsx
 "use client";
 
-import { Box, Flex, Heading, IconButton, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, IconButton, Image, Text } from "@chakra-ui/react";
 import { useState, useEffect, useRef } from "react";
 import Slider from "react-slick";
-import Image from "next/image";
 import { FaHeart, FaRegHeart, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useRouter } from "next/router";
 import translations from "@/utils/translations";
@@ -15,6 +13,7 @@ import "slick-carousel/slick/slick-theme.css";
 export default function PropertyCarousel() {
   const router = useRouter();
   const locale = router?.locale || "en";
+
   const t = (path) => {
     const parts = path.split(".");
     let cur = translations[locale] || translations.en;
@@ -29,6 +28,9 @@ export default function PropertyCarousel() {
   const [properties, setProperties] = useState([]);
   const sliderRef = useRef(null);
 
+  const toggleLike = (id) =>
+    setLiked((prev) => ({ ...prev, [id]: !prev[id] }));
+
   useEffect(() => {
     async function fetchPremium() {
       try {
@@ -39,29 +41,28 @@ export default function PropertyCarousel() {
         console.error("Failed to load premium properties", err);
       }
     }
+
     fetchPremium();
   }, []);
 
-  const toggleLike = (id) => setLiked((prev) => ({ ...prev, [id]: !prev[id] }));
-
- const settings = {
-  dots: false,
-  infinite: true,
-  speed: 500,
-  slidesToShow: 4,
-  slidesToScroll: 1,
-  swipeToSlide: true,
-  adaptiveHeight: true,
-  responsive: [
-    { breakpoint: 1024, settings: { slidesToShow: 3 } },
-    { breakpoint: 768, settings: { slidesToShow: 2 } },
-    { breakpoint: 640, settings: { slidesToShow: 1 } }, // <-- 1 slide on mobile
-  ],
-};
-
+  const settings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    adaptiveHeight: true,
+    swipeToSlide: true,
+    responsive: [
+      { breakpoint: 1024, settings: { slidesToShow: 3 } },
+      { breakpoint: 768, settings: { slidesToShow: 2 } },
+      { breakpoint: 640, settings: { slidesToShow: 1 } },
+    ],
+  };
 
   return (
     <Box position="relative" w="100%" py={10} px={{ base: 4, md: 10 }}>
+      {/* Header */}
       <Flex justify="space-between" align="center" mb={6}>
         <Heading color="white" fontSize={{ base: "xl", md: "2xl" }}>
           {t("carousel.title")}
@@ -71,6 +72,7 @@ export default function PropertyCarousel() {
             aria-label="Previous"
             icon={<FaChevronLeft />}
             onClick={() => sliderRef.current?.slickPrev()}
+            colorScheme="whiteAlpha"
             variant="outline"
             size={{ base: "sm", md: "md" }}
           />
@@ -78,12 +80,14 @@ export default function PropertyCarousel() {
             aria-label="Next"
             icon={<FaChevronRight />}
             onClick={() => sliderRef.current?.slickNext()}
+            colorScheme="whiteAlpha"
             variant="outline"
             size={{ base: "sm", md: "md" }}
           />
         </Flex>
       </Flex>
 
+      {/* Carousel */}
       <Box className="property-carousel-container">
         <Slider ref={sliderRef} {...settings}>
           {properties.map((p) => (
@@ -99,22 +103,20 @@ export default function PropertyCarousel() {
                 transition="all 0.3s ease"
                 onClick={() => router.push(`/property/${p._id}`)}
               >
-                {/* wrapper with fixed height so next/image fill works predictably */}
-                <Box position="relative" width="100%" height={{ base: "220px", md: "250px" }}>
-                  <Image
-                    src={p.coverPhoto || "/placeholder.jpg"}
-                    alt={String(p.price)}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width:1024px) 50vw, 33vw"
-                    style={{ objectFit: "cover" }}
-                    priority={false}
-                  />
-                </Box>
+                <Image
+                  src={p.coverPhoto || "/placeholder.jpg"}
+                  alt={p.price}
+                  w="100%"
+                  h={{ base: "220px", md: "250px" }}
+                  objectFit="cover"
+                />
 
                 <Box position="absolute" top="3" right="3" zIndex="2">
                   <IconButton
                     aria-label="Like"
-                    icon={liked[p._id] ? <FaHeart color="red" /> : <FaRegHeart color="white" />}
+                    icon={
+                      liked[p._id] ? <FaHeart color="red" /> : <FaRegHeart color="white" />
+                    }
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleLike(p._id);
@@ -143,52 +145,40 @@ export default function PropertyCarousel() {
         </Slider>
       </Box>
 
+      {/* Global CSS overrides */}
       <style jsx global>{`
-    /* slick carousel container */
-.property-carousel-container .slick-list {
-  overflow: hidden;
-}
+        .property-carousel-container .slick-list {
+          overflow: hidden;
+        }
 
-/* track must be flex always */
-.property-carousel-container .slick-track {
-  display: flex !important;
-  align-items: stretch;
-}
+        .property-carousel-container .slick-track {
+          display: flex !important;
+          align-items: stretch;
+        }
 
-/* slides fill width properly */
-.property-carousel-container .slick-slide {
-  display: flex !important;
-  justify-content: center;
-  align-items: stretch;
-  height: auto !important;
-  box-sizing: border-box;
-  padding: 0 !important;
-}
+        .property-carousel-container .slick-slide {
+          display: flex !important;
+          justify-content: center;
+          align-items: stretch;
+          height: auto !important;
+        }
 
-/* slide content fills parent */
-.property-carousel-container .slick-slide > div {
-  width: 100% !important;
-  max-width: 100% !important;
-  display: flex;
-  flex-direction: column;
-}
+        .property-carousel-container .slick-slide > div {
+          width: 100% !important;
+          display: flex;
+          justify-content: center;
+        }
 
-/* override padding on slide wrapper */
-.property-slide {
-  width: 100% !important;
-  max-width: 100% !important;
-  padding: 0 !important;
-}
+        .property-slide {
+          width: 100% !important;
+          max-width: 360px;
+        }
 
-/* mobile override */
-@media (max-width: 640px) {
-  .property-slide,
-  .property-carousel-container .slick-slide > div {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-}
-
+        @media (min-width: 768px) {
+          .property-slide {
+            max-width: 320px;
+          }
+        }
       `}</style>
     </Box>
   );
