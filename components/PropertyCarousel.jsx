@@ -45,42 +45,44 @@ export default function PropertyCarousel() {
     fetchPremium();
   }, []);
 
+  // ========================
+  // FIXED RESPONSIVE SETTINGS
+  // ========================
   const settings = {
     dots: true,
     infinite: properties.length > 1,
     speed: 500,
+
+    // DEFAULT DESKTOP (VERY IMPORTANT)
     slidesToShow: 4,
     slidesToScroll: 1,
+
     arrows: false,
     swipeToSlide: true,
     touchThreshold: 10,
     cssEase: "ease-in-out",
+
     responsive: [
-      { 
-        breakpoint: 1280, 
-        settings: { 
+      {
+        breakpoint: 1280, // < 1280px = 3 slides
+        settings: {
           slidesToShow: 3,
-          slidesToScroll: 1,
-          dots: false
-        } 
+          dots: false,
+        },
       },
-      { 
-        breakpoint: 900, 
-        settings: { 
+      {
+        breakpoint: 1024, // < 1024px = 2 slides
+        settings: {
           slidesToShow: 2,
-          slidesToScroll: 1,
-          dots: true
-        } 
-      },
-      { 
-        breakpoint: 640, 
-        settings: { 
-          slidesToShow: 1,
-          slidesToScroll: 1,
           dots: true,
-          centerMode: false,
-          variableWidth: false
-        } 
+        },
+      },
+      {
+        breakpoint: 640, // < 640px = 1 slide
+        settings: {
+          slidesToShow: 1,
+          dots: true,
+        },
       },
     ],
   };
@@ -88,15 +90,11 @@ export default function PropertyCarousel() {
   return (
     <Box position="relative" w="100%" py={10} px={{ base: 0, md: 10 }}>
       {/* Header */}
-      <Flex 
-        justify="space-between" 
-        align="center" 
-        mb={6} 
-        px={{ base: 4, md: 0 }}
-      >
+      <Flex justify="space-between" align="center" mb={6} px={{ base: 4, md: 0 }}>
         <Heading color="white" fontSize={{ base: "xl", md: "2xl" }}>
           {t("carousel.title")}
         </Heading>
+
         <Flex gap={2}>
           <IconButton
             aria-label="Previous"
@@ -106,6 +104,7 @@ export default function PropertyCarousel() {
             variant="outline"
             size={{ base: "sm", md: "md" }}
           />
+
           <IconButton
             aria-label="Next"
             icon={<FaChevronRight />}
@@ -118,15 +117,11 @@ export default function PropertyCarousel() {
       </Flex>
 
       {/* Carousel */}
-      <Box 
-        className="property-carousel-wrapper"
-        px={{ base: 4, md: 0 }}
-      >
+      <Box className="property-carousel-wrapper" px={{ base: 4, md: 0 }}>
         <Slider ref={sliderRef} {...settings}>
           {properties.map((p) => (
-            <Box key={p._id} className="property-slide-container">
+            <Box key={p._id} px={{ base: 0, md: 2 }}>
               <Box
-                className="property-card"
                 position="relative"
                 borderRadius="2xl"
                 overflow="hidden"
@@ -136,6 +131,8 @@ export default function PropertyCarousel() {
                 _hover={{ transform: "scale(1.02)" }}
                 transition="all 0.3s ease"
                 onClick={() => router.push(`/property/${p._id}`)}
+                mx="auto"
+                maxW="350px"
               >
                 <Image
                   src={p.coverPhoto || "/placeholder.jpg"}
@@ -148,9 +145,7 @@ export default function PropertyCarousel() {
                 <Box position="absolute" top="3" right="3" zIndex="2">
                   <IconButton
                     aria-label="Like"
-                    icon={
-                      liked[p._id] ? <FaHeart color="red" /> : <FaRegHeart color="white" />
-                    }
+                    icon={liked[p._id] ? <FaHeart color="red" /> : <FaRegHeart color="white" />}
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleLike(p._id);
@@ -179,121 +174,37 @@ export default function PropertyCarousel() {
         </Slider>
       </Box>
 
-      {/* Scoped styles */}
+      {/* FIXED CSS */}
       <style jsx global>{`
-        /* Carousel wrapper */
-        .property-carousel-wrapper {
-          width: 100%;
-          overflow: hidden;
-        }
-
-        .property-carousel-wrapper .slick-slider {
-          position: relative;
-          display: block;
-          box-sizing: border-box;
-          user-select: none;
-          touch-action: pan-y;
-        }
-
         .property-carousel-wrapper .slick-list {
-          position: relative;
-          display: block;
           overflow: hidden;
-          margin: 0;
-          padding: 0;
         }
 
         .property-carousel-wrapper .slick-track {
-          position: relative;
-          top: 0;
-          left: 0;
           display: flex !important;
-          align-items: stretch;
         }
 
         .property-carousel-wrapper .slick-slide {
-          height: auto;
-          display: flex !important;
+          margin: 0 !important;
         }
 
-        .property-carousel-wrapper .slick-slide > div {
-          width: 100%;
-          display: flex;
-        }
-
-        /* Slide container with padding */
-        .property-slide-container {
-          padding: 0 8px;
-          width: 100%;
-          box-sizing: border-box;
-        }
-
-        .property-card {
-          width: 100%;
-          max-width: 350px;
-          margin: 0 auto;
-        }
-
-        /* Mobile - 1 property, NO peeking */
+        /* MOBILE ONLY */
         @media (max-width: 640px) {
-          .property-carousel-wrapper .slick-list {
+          .property-carousel-wrapper {
             overflow: hidden !important;
-            padding: 0 !important;
-          }
-
-          .property-slide-container {
-            padding: 0 !important;
-          }
-
-          .property-card {
-            max-width: 100%;
           }
         }
 
-        /* Tablet - 2 properties */
-        @media (min-width: 641px) and (max-width: 900px) {
-          .property-card {
-            max-width: 100%;
-          }
-        }
-
-        /* Desktop - 3-4 properties */
-        @media (min-width: 901px) {
-          .property-card {
-            max-width: 350px;
-          }
-        }
-
-        /* Dots styling */
+        /* Dots */
         .property-carousel-wrapper .slick-dots {
-          position: relative;
-          bottom: 0;
           display: flex !important;
           justify-content: center;
           margin-top: 20px;
-          padding: 0;
-          list-style: none;
-        }
-
-        .property-carousel-wrapper .slick-dots li {
-          position: relative;
-          display: inline-block;
-          margin: 0 5px;
-          padding: 0;
-          cursor: pointer;
         }
 
         .property-carousel-wrapper .slick-dots li button {
-          font-size: 0;
-          line-height: 0;
-          display: block;
           width: 8px;
           height: 8px;
-          padding: 0;
-          cursor: pointer;
-          color: transparent;
-          border: 0;
-          outline: none;
           background: white;
           border-radius: 50%;
           opacity: 0.5;
@@ -304,12 +215,7 @@ export default function PropertyCarousel() {
           opacity: 1;
         }
 
-        .property-carousel-wrapper .slick-dots li button:before {
-          display: none;
-        }
-
-        /* Hide dots on larger screens */
-        @media (min-width: 1024px) {
+        @media (min-width: 769px) {
           .property-carousel-wrapper .slick-dots {
             display: none !important;
           }
