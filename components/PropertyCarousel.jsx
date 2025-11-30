@@ -1,114 +1,70 @@
 "use client";
 
 import { Box, Flex, Heading, IconButton, Image, Text } from "@chakra-ui/react";
-import { useState, useEffect, useRef } from "react";
-import Slider from "react-slick";
-import { FaHeart, FaRegHeart, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaHeart, FaRegHeart } from "react-icons/fa";
+import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import translations from "@/utils/translations";
-
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 
 export default function PropertyCarousel() {
   const router = useRouter();
   const locale = router?.locale || "en";
 
   const t = (path) => {
-    const parts = path.split(".");
-    let cur = translations[locale] || translations.en;
-    for (const p of parts) {
-      cur = cur?.[p];
-      if (cur == null) return path;
-    }
-    return cur;
+    const keys = path.split(".");
+    let obj = translations[locale] || translations.en;
+    for (let k of keys) obj = obj?.[k];
+    return obj || path;
   };
 
-  const [liked, setLiked] = useState({});
   const [properties, setProperties] = useState([]);
-  const sliderRef = useRef(null);
-
-  const toggleLike = (id) =>
-    setLiked((prev) => ({ ...prev, [id]: !prev[id] }));
+  const [liked, setLiked] = useState({});
+  const scrollRef = useRef(null);
 
   useEffect(() => {
-    async function fetchPremium() {
+    async function getData() {
       try {
         const res = await fetch("/api/premium-properties");
         const data = await res.json();
         if (data.success) setProperties(data.data);
       } catch (err) {
-        console.error("Failed to load premium properties", err);
+        console.error(err);
       }
     }
-
-    fetchPremium();
+    getData();
   }, []);
 
-  // ========================
-  // FIXED RESPONSIVE SETTINGS
-  // ========================
-  const settings = {
-    dots: true,
-    infinite: properties.length > 1,
-    speed: 500,
+  const scrollByCard = (direction = 1) => {
+    const container = scrollRef.current;
+    if (!container) return;
+    const firstCard = container.querySelector("[data-carousel-card]");
+    if (!firstCard) return;
 
-    // DEFAULT DESKTOP (VERY IMPORTANT)
-    slidesToShow: 4,
-    slidesToScroll: 1,
-
-    arrows: false,
-    swipeToSlide: true,
-    touchThreshold: 10,
-    cssEase: "ease-in-out",
-
-    responsive: [
-      {
-        breakpoint: 1280, // < 1280px = 3 slides
-        settings: {
-          slidesToShow: 3,
-          dots: false,
-        },
-      },
-      {
-        breakpoint: 1024, // < 1024px = 2 slides
-        settings: {
-          slidesToShow: 2,
-          dots: true,
-        },
-      },
-      {
-        breakpoint: 640, // < 640px = 1 slide
-        settings: {
-          slidesToShow: 1,
-          dots: true,
-        },
-      },
-    ],
+    const cardWidth = firstCard.offsetWidth;
+    const gap = Number(getComputedStyle(container).gap?.replace("px", "")) || 16;
+    container.scrollBy({ left: (cardWidth + gap) * direction, behavior: "smooth" });
   };
 
   return (
-    <Box position="relative" w="100%" py={10} px={{ base: 0, md: 10 }}>
+    <Box w="100%" py={10} px={{ base: 2, md: 10 }}>
       {/* Header */}
-      <Flex justify="space-between" align="center" mb={6} px={{ base: 4, md: 0 }}>
+      <Flex justify="space-between" align="center" mb={6}>
         <Heading color="white" fontSize={{ base: "xl", md: "2xl" }}>
           {t("carousel.title")}
         </Heading>
-
         <Flex gap={2}>
           <IconButton
-            aria-label="Previous"
+            aria-label="Left"
             icon={<FaChevronLeft />}
-            onClick={() => sliderRef.current?.slickPrev()}
+            onClick={() => scrollByCard(-1)}
             colorScheme="whiteAlpha"
             variant="outline"
             size={{ base: "sm", md: "md" }}
           />
-
           <IconButton
-            aria-label="Next"
+            aria-label="Right"
             icon={<FaChevronRight />}
-            onClick={() => sliderRef.current?.slickNext()}
+            onClick={() => scrollByCard(1)}
             colorScheme="whiteAlpha"
             variant="outline"
             size={{ base: "sm", md: "md" }}
@@ -117,110 +73,75 @@ export default function PropertyCarousel() {
       </Flex>
 
       {/* Carousel */}
-      <Box className="property-carousel-wrapper" px={{ base: 4, md: 0 }}>
-        <Slider ref={sliderRef} {...settings}>
-          {properties.map((p) => (
-            <Box key={p._id} px={{ base: 0, md: 2 }}>
-              <Box
-                position="relative"
-                borderRadius="2xl"
-                overflow="hidden"
-                bg="white"
-                color="gray.800"
-                cursor="pointer"
-                _hover={{ transform: "scale(1.02)" }}
-                transition="all 0.3s ease"
-                onClick={() => router.push(`/property/${p._id}`)}
-                mx="auto"
-                maxW="350px"
-              >
-                <Image
-                  src={p.coverPhoto || "/placeholder.jpg"}
-                  alt={p.price}
-                  w="100%"
-                  h={{ base: "280px", md: "250px" }}
-                  objectFit="cover"
-                />
+      <Flex
+        ref={scrollRef}
+        overflowX="auto"
+        wrap="nowrap"
+        gap={{ base: 4, md: 5 }}
+        scrollSnapType="x mandatory"
+        sx={{
+          "&::-webkit-scrollbar": { display: "none" },
+          scrollBehavior: "smooth",
+        }}
+      >
+        {properties.map((p) => (
+          <Box
+            key={p._id}
+            data-carousel-card
+            flex="0 0 auto"
+            w={{
+              base: "96%", // one full card on mobile
+              sm: "46%",    // 2 cards on small tablets
+              md: "30%", // 3 cards on desktop
+              lg: "23%",    // 4 cards on large screens
+            }}
+            scrollSnapAlign="start"
+            scrollSnapStop="always"
+            bg="white"
+            borderRadius="2xl"
+            overflow="hidden"
+            position="relative"
+            cursor="pointer"
+            boxShadow="lg"
+            onClick={() => router.push(`/property/${p._id}`)}
+          >
+            <Image
+              src={p.coverPhoto || "/placeholder.jpg"}
+              alt={p.price}
+              w="100%"
+              h="230px"
+              objectFit="cover"
+            />
 
-                <Box position="absolute" top="3" right="3" zIndex="2">
-                  <IconButton
-                    aria-label="Like"
-                    icon={liked[p._id] ? <FaHeart color="red" /> : <FaRegHeart color="white" />}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleLike(p._id);
-                    }}
-                    bg="rgba(0,0,0,0.4)"
-                    _hover={{ bg: "rgba(0,0,0,0.6)" }}
-                    borderRadius="full"
-                    size="sm"
-                  />
-                </Box>
+            <IconButton
+              aria-label="Like"
+              icon={liked[p._id] ? <FaHeart color="red" /> : <FaRegHeart color="white" />}
+              onClick={(e) => {
+                e.stopPropagation();
+                setLiked((prev) => ({ ...prev, [p._id]: !prev[p._id] }));
+              }}
+              position="absolute"
+              top="3"
+              right="3"
+              bg="blackAlpha.500"
+              size="sm"
+              borderRadius="full"
+              _hover={{ bg: "blackAlpha.700" }}
+            />
 
-                <Box p={4}>
-                  <Text color="goldenrod" fontWeight="bold" fontSize="lg">
-                    ${p.price?.toLocaleString()}
-                  </Text>
-                  <Text color="gray.900" fontSize="sm" mt={1}>
-                    {p.area || p.size || "—"} sq ft
-                  </Text>
-                  <Text color="gray.700" fontSize="xs" noOfLines={1} mt={1}>
-                    {p.location || ""}
-                  </Text>
-                </Box>
-              </Box>
+            <Box p={4} color="black">
+              <Text fontWeight="bold" fontSize="lg" color="goldenrod">
+                ${p.price?.toLocaleString()}
+              </Text>
+              <Text fontSize="sm">{p.area || p.size} sq ft</Text>
+              <Text fontSize="xs" noOfLines={1} color="gray.600">
+                {p.location}
+              </Text>
             </Box>
-          ))}
-        </Slider>
-      </Box>
+          </Box>
+        ))}
 
-      {/* FIXED CSS */}
-      <style jsx global>{`
-        .property-carousel-wrapper .slick-list {
-          overflow: hidden;
-        }
-
-        .property-carousel-wrapper .slick-track {
-          display: flex !important;
-        }
-
-        .property-carousel-wrapper .slick-slide {
-          margin: 0 !important;
-        }
-
-        /* MOBILE ONLY */
-        @media (max-width: 640px) {
-          .property-carousel-wrapper {
-            overflow: hidden !important;
-          }
-        }
-
-        /* Dots */
-        .property-carousel-wrapper .slick-dots {
-          display: flex !important;
-          justify-content: center;
-          margin-top: 20px;
-        }
-
-        .property-carousel-wrapper .slick-dots li button {
-          width: 8px;
-          height: 8px;
-          background: white;
-          border-radius: 50%;
-          opacity: 0.5;
-        }
-
-        .property-carousel-wrapper .slick-dots li.slick-active button {
-          background: goldenrod;
-          opacity: 1;
-        }
-
-        @media (min-width: 769px) {
-          .property-carousel-wrapper .slick-dots {
-            display: none !important;
-          }
-        }
-      `}</style>
+      </Flex>
     </Box>
   );
 }
