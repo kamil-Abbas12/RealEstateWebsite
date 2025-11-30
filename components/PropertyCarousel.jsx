@@ -46,41 +46,45 @@ export default function PropertyCarousel() {
   }, []);
 
   // ========================
-  // CORRECTED RESPONSIVE SETTINGS
+  // FIXED RESPONSIVE SETTINGS
   // ========================
   const settings = {
     dots: true,
     infinite: properties.length > 1,
     speed: 500,
+
+    // DEFAULT DESKTOP (VERY IMPORTANT)
+    slidesToShow: 4,
+    slidesToScroll: 1,
+
     arrows: false,
     swipeToSlide: true,
     touchThreshold: 10,
     cssEase: "ease-in-out",
 
-    // Start with mobile-first approach
-    slidesToShow: 1,
-    slidesToScroll: 1,
-
     responsive: [
       {
-        breakpoint: 768, // Tablet and above: 2 slides
+        breakpoint: 1280, // < 1280px = 3 slides
         settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          dots: true,
-          infinite: properties.length > 2,
-        }
+          slidesToShow: 3,
+          dots: false,
+        },
       },
       {
-        breakpoint: 1024, // Laptop and above: 4 slides
+        breakpoint: 1024, // < 1024px = 2 slides
         settings: {
-          slidesToShow: 4,
-          slidesToScroll: 1,
-          dots: false,
-          infinite: properties.length > 4,
-        }
-      }
-    ]
+          slidesToShow: 2,
+          dots: true,
+        },
+      },
+      {
+        breakpoint: 640, // < 640px = 1 slide
+        settings: {
+          slidesToShow: 1,
+          dots: true,
+        },
+      },
+    ],
   };
 
   return (
@@ -116,7 +120,7 @@ export default function PropertyCarousel() {
       <Box className="property-carousel-wrapper" px={{ base: 4, md: 0 }}>
         <Slider ref={sliderRef} {...settings}>
           {properties.map((p) => (
-            <Box key={p._id} px={2}> {/* Added consistent padding */}
+            <Box key={p._id} px={{ base: 0, md: 2 }}>
               <Box
                 position="relative"
                 borderRadius="2xl"
@@ -170,38 +174,32 @@ export default function PropertyCarousel() {
         </Slider>
       </Box>
 
-      {/* UPDATED CSS */}
+      {/* FIXED CSS */}
       <style jsx global>{`
         .property-carousel-wrapper .slick-list {
-          overflow: visible;
-          margin: 0 -8px;
+          overflow: hidden;
         }
 
         .property-carousel-wrapper .slick-track {
           display: flex !important;
-          gap: 0;
         }
 
         .property-carousel-wrapper .slick-slide {
-          height: inherit;
-          padding: 0 8px;
+          margin: 0 !important;
         }
 
-        .property-carousel-wrapper .slick-slide > div {
-          height: 100%;
+        /* MOBILE ONLY */
+        @media (max-width: 640px) {
+          .property-carousel-wrapper {
+            overflow: hidden !important;
+          }
         }
 
-        /* Dots styling */
+        /* Dots */
         .property-carousel-wrapper .slick-dots {
           display: flex !important;
           justify-content: center;
           margin-top: 20px;
-          position: relative;
-          bottom: 0;
-        }
-
-        .property-carousel-wrapper .slick-dots li {
-          margin: 0 4px;
         }
 
         .property-carousel-wrapper .slick-dots li button {
@@ -210,34 +208,16 @@ export default function PropertyCarousel() {
           background: white;
           border-radius: 50%;
           opacity: 0.5;
-          transition: all 0.3s ease;
-        }
-
-        .property-carousel-wrapper .slick-dots li button:before {
-          display: none;
         }
 
         .property-carousel-wrapper .slick-dots li.slick-active button {
           background: goldenrod;
           opacity: 1;
-          transform: scale(1.2);
         }
 
-        /* Hide dots on desktop (1024px and above) */
-        @media (min-width: 1024px) {
+        @media (min-width: 769px) {
           .property-carousel-wrapper .slick-dots {
             display: none !important;
-          }
-        }
-
-        /* Ensure proper spacing on mobile */
-        @media (max-width: 767px) {
-          .property-carousel-wrapper .slick-list {
-            margin: 0 -4px;
-          }
-          
-          .property-carousel-wrapper .slick-slide {
-            padding: 0 4px;
           }
         }
       `}</style>
