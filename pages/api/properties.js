@@ -9,6 +9,7 @@ export default async function handler(req, res) {
     if (!session) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
+    
 
     const ownerId = session.user.email;
     const client = await clientPromise;
