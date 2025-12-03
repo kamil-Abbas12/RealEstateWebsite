@@ -4,7 +4,8 @@ import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import clientPromise from "@/lib/mongodb";
 
-export default NextAuth({
+// Export authOptions for use in API routes
+export const authOptions = {
   session: { strategy: "jwt" },
 
   providers: [
@@ -25,7 +26,6 @@ export default NextAuth({
           throw new Error("No account found with this email. Please sign up first.");
         }
 
-        // ✅ Check if user signed up via Google only (no password set)
         if (!user.password) {
           throw new Error("This account uses Google Sign-In. Please login with Google or add a password.");
         }
@@ -61,7 +61,6 @@ export default NextAuth({
         });
 
         if (!existingUser) {
-          // ✅ New Google user
           const newUser = await db.collection("users").insertOne({
             email: user.email,
             name: user.name,
@@ -72,10 +71,8 @@ export default NextAuth({
 
           user.id = newUser.insertedId.toString();
         } else {
-          // ✅ Existing user - update provider if needed
           user.id = existingUser._id.toString();
-          
-          // Update provider to "both" if they had credentials before
+
           if (existingUser.provider === "credentials") {
             await db.collection("users").updateOne(
               { email: user.email },
@@ -111,4 +108,7 @@ export default NextAuth({
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
+
+// Use authOptions in NextAuth
+export default NextAuth(authOptions);
