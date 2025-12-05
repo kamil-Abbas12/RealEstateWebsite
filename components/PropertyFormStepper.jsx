@@ -118,8 +118,8 @@ export default function PropertyFormStepper({ propertyId }) {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
 
-    if (images.length + files.length > 12) {
-      toast({ title: "Maximum 12 images allowed", status: "warning" });
+    if (images.length + files.length > 100) {
+      toast({ title: "Maximum 100 images allowed", status: "warning" });
       return;
     }
 
@@ -129,8 +129,8 @@ export default function PropertyFormStepper({ propertyId }) {
     try {
       const uploads = files.map((file) => uploadToCloud(file));
       const urls = await Promise.all(uploads);
-      setImages((prev) => [...prev, ...urls].slice(0, 12));
-      setPreviews((prev) => [...prev, ...urls].slice(0, 12));
+      setImages((prev) => [...prev, ...urls].slice(0, 100));
+      setPreviews((prev) => [...prev, ...urls].slice(0, 100));
       toast({ title: `${urls.length} images uploaded`, status: "success" });
     } catch (err) {
       toast({ title: "Upload failed", description: err.message, status: "error" });
@@ -394,15 +394,15 @@ export default function PropertyFormStepper({ propertyId }) {
         {(step === 2 || isEdit) && (
           <>
             <FormControl>
-              <FormLabel>Property Images (Max 12)</FormLabel>
+              <FormLabel>Property Images (Max 100)</FormLabel>
               <Input
                 type="file"
                 accept="image/*"
                 multiple
                 onChange={handleFiles}
-                disabled={uploading || images.length >= 12}
+                disabled={uploading || images.length >= 100}
               />
-              <FormHelperText>{images.length}/12 images uploaded</FormHelperText>
+              <FormHelperText>{images.length}/100 images uploaded</FormHelperText>
 
               {uploading && (
                 <Box mt={2}>

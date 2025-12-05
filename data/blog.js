@@ -595,7 +595,7 @@ Whether you're looking for long-term capital gains or high cash flow, Australia 
     slug: "germany-real-estate-buying-vs-renting",
     excerpt: "A detailed guide to navigating the German property market: is it better to buy or rent?",
     date: "2025-11-15",
-    author: "Kamil Abbas",
+    author: "Adres Kane",
     featuredImage: "/property7.jpg",
     content: `# Germany Real Estate: Buying vs Renting Guide
 

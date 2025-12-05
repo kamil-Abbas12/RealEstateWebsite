@@ -123,8 +123,8 @@ export default function PropertyForm({ onSuccess } = {}) {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
 
-    if (images.length + files.length > 12) {
-      toast({ title: "Maximum 12 images allowed", status: "warning" });
+    if (images.length + files.length > 100) {
+      toast({ title: "Maximum 100 images allowed", status: "warning" });
       return;
     }
 
@@ -135,8 +135,8 @@ export default function PropertyForm({ onSuccess } = {}) {
       const uploads = files.map(f => uploadToCloud(f));
       const urls = await Promise.all(uploads);
 
-      setImages(prev => [...prev, ...urls].slice(0, 12));
-      setPreviews(prev => [...prev, ...urls].slice(0, 12));
+      setImages(prev => [...prev, ...urls].slice(0, 100));
+      setPreviews(prev => [...prev, ...urls].slice(0, 100));
 
       toast({ title: `${urls.length} image(s) uploaded`, status: "success" });
     } catch (err) {
@@ -377,9 +377,9 @@ export default function PropertyForm({ onSuccess } = {}) {
         {step === 2 && (
           <>
             <FormControl isRequired>
-              <FormLabel>Property Images (Max 12)</FormLabel>
-              <Input type="file" accept="image/*" multiple onChange={handleFiles} disabled={uploading || images.length >= 12} />
-              <FormHelperText>{images.length}/12 images uploaded</FormHelperText>
+              <FormLabel>Property Images (Max 100)</FormLabel>
+              <Input type="file" accept="image/*" multiple onChange={handleFiles} disabled={uploading || images.length >= 100} />
+              <FormHelperText>{images.length}/100 images uploaded</FormHelperText>
 
               {uploading && (
                 <Box mt={2}>
@@ -695,33 +695,45 @@ export default function PropertyForm({ onSuccess } = {}) {
             </RadioGroup>
 
             {showContactInfo === 'yes' && (
-              <VStack spacing={3} mt={4}>
-                <FormControl isRequired>
-                  <FormLabel>Name</FormLabel>
-                  <Input 
-                    value={contactInfo.name} 
-                    onChange={(e) => setContactInfo({...contactInfo, name: e.target.value})} 
-                    placeholder="Your name" 
-                  />
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>Email</FormLabel>
-                  <Input 
-                    type="email"
-                    value={contactInfo.email} 
-                    onChange={(e) => setContactInfo({...contactInfo, email: e.target.value})} 
-                    placeholder="your@email.com" 
-                  />
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>Phone</FormLabel>
-                  <Input 
-                    value={contactInfo.phone} 
-                    onChange={(e) => setContactInfo({...contactInfo, phone: e.target.value})} 
-                    placeholder="+1 234 567 8900" 
-                  />
-                </FormControl>
-              </VStack>
+              <VStack 
+  spacing={4} 
+  mt={6}
+  width="100%"
+  maxW={{ base: "100%", sm: "400px", md: "500px", lg: "600px" }}
+  mx="auto"
+>
+  <FormControl isRequired width="100%">
+    <FormLabel>Name</FormLabel>
+    <Input 
+      value={contactInfo.name} 
+      onChange={(e) => setContactInfo({...contactInfo, name: e.target.value})} 
+      placeholder="Your name"
+      width="100%"
+    />
+  </FormControl>
+
+  <FormControl isRequired width="100%">
+    <FormLabel>Email</FormLabel>
+    <Input 
+      type="email"
+      value={contactInfo.email} 
+      onChange={(e) => setContactInfo({...contactInfo, email: e.target.value})} 
+      placeholder="your@email.com"
+      width="100%"
+    />
+  </FormControl>
+
+  <FormControl isRequired width="100%">
+    <FormLabel>Phone</FormLabel>
+    <Input 
+      value={contactInfo.phone} 
+      onChange={(e) => setContactInfo({...contactInfo, phone: e.target.value})} 
+      placeholder="+1 234 567 8900"
+      width="100%"
+    />
+  </FormControl>
+</VStack>
+
             )}
           </ModalBody>
           <ModalFooter>

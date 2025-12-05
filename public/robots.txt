@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://evergreenestateglob.com/sitemap.xml
+Host: https://evergreenestateglob.com
