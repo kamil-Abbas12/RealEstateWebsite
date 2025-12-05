@@ -1,40 +1,63 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+// pages/sitemap.xml.js
+import { MongoClient } from "mongodb";
+import blogs from "../data/blog";
 
+export async function getServerSideProps({ res }) {
+  const baseUrl = "https://evergreenestateglob.com";
+
+  // Connect to MongoDB directly (replace with your connection string)
+  const client = await MongoClient.connect(process.env.MONGODB_URI);
+  const db = client.db("realestate");
+  const properties = await db.collection("properties").find({}).toArray();
+  client.close();
+
+  const staticPages = [
+    "",
+    "/properties",
+    "/blog",
+    "/blog/grid",
+    "/blog/list",
+    "/search?listing_status=sale",
+    "/search?listing_status=rent",
+  ];
+
+  let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`;
+
+  // Add static pages
+  staticPages.forEach((page) => {
+    sitemap += `
   <url>
-    <loc>https://evergreenestateglob.com/</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
+    <loc>${baseUrl}${page}</loc>
+  </url>`;
+  });
 
+  // Add dynamic properties
+  properties.forEach((property) => {
+    sitemap += `
   <url>
-    <loc>https://evergreenestateglob.com/listings</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
+    <loc>${baseUrl}/property/${property._id}</loc>
+  </url>`;
+  });
 
+  // Add dynamic blogs
+  blogs.forEach((blog) => {
+    sitemap += `
   <url>
-    <loc>https://evergreenestateglob.com/add-property</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
+    <loc>${baseUrl}/blog/${blog.slug}</loc>
+  </url>`;
+  });
 
-  <url>
-    <loc>https://evergreenestateglob.com/about</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
+  sitemap += `
+</urlset>`;
 
-  <url>
-    <loc>https://evergreenestateglob.com/contact</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
+  res.setHeader("Content-Type", "text/xml");
+  res.write(sitemap);
+  res.end();
 
-  <url>
-    <loc>https://evergreenestateglob.com/login</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
-  </url>
+  return { props: {} };
+}
 
-</urlset>
+export default function Sitemap() {
+  return null;
+}

@@ -8,6 +8,7 @@ import Head from "next/head";
 import Layout from "../components/Layout";
 import ScrollToTop from "@/components/ScrollToTop";
 import { useEffect } from "react";
+import Script from "next/script"; // <-- Add this
 import "leaflet/dist/leaflet.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -43,6 +44,20 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
         <title>Real Estate Platform</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
+
+      {/* Google Analytics */}
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-807CYQCC8H"
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-807CYQCC8H');
+        `}
+      </Script>
 
       <SessionProvider session={session}>
         <ChakraProvider theme={theme}>
