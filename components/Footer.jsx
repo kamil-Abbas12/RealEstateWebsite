@@ -71,7 +71,7 @@ export default function Footer() {
             { name: t.links.buy, href: "/search?listing_status=sale" },
             { name: t.links.sell, href: "/search?listing_status=rent" },
             { name: t.links.properties, href: "/properties" },
-            { name: t.links.contact, href: "/contact" },
+            { name: t.links.contact, href: "/blog" },
           ].map((link) => (
             <Link
               key={link.name}
