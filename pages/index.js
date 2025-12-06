@@ -1,7 +1,7 @@
 // pages/index.js
 import dynamic from "next/dynamic";
 import Head from "next/head";
-import { Flex, Box, Center } from "@chakra-ui/react";
+import { Flex, Box } from "@chakra-ui/react";
 import SearchFilters from "@/components/SearchFilters";
 import HeroSection from "@/components/HeroSection";
 import PropertyCarousel from "@/components/PropertyCarousel";
@@ -86,6 +86,7 @@ const Home = () => {
   position="absolute"
   bottom="-5"
   left="50%"
+  zIndex={{base:"150px", md:"1px"}}
   transform="translateX(-50%)"
   w="100%"
   display="flex"

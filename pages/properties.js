@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import Property from "@/components/Property.jsx";
 import { Box, Heading, SimpleGrid, Spinner, Text, Badge } from "@chakra-ui/react";
 import Link from "next/link";
+import Head from "next/head";
 
 export default function PropertiesPage() {
+
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -52,6 +54,21 @@ export default function PropertiesPage() {
   );
 
   return (
+    <>
+<Head>
+        <title>Properties for Sale & Rent | Evergreen Estate</title>
+        <meta
+          name="description"
+          content="Browse premium real estate properties for sale and rent. Find your dream home or investment property with Evergreen Estate."
+        />
+        <meta property="og:title" content="Properties for Sale & Rent" />
+        <meta
+          property="og:description"
+          content="Browse premium real estate properties for sale and rent. Find your dream home or investment property."
+        />
+        <meta property="og:image" content="/cover.jpg" />
+        <meta property="og:type" content="website" />
+      </Head>
     <Box p={6}>
       <Heading mb={4}>Buy Properties</Heading>
       {loading ? (
@@ -71,5 +88,6 @@ export default function PropertiesPage() {
         renderGrid(rentProps)
       )}
     </Box>
+    </>
   );
 }

@@ -19,7 +19,6 @@ export const Navbar = () => {
   const { data: session } = useSession(); // NextAuth session
   const router = useRouter();
   const locale = router.locale || "en";
-
   const t = (path) => {
     const parts = path.split(".");
     let cur = translations[locale] || translations.en;

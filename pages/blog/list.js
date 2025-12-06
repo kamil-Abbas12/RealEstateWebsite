@@ -1,5 +1,7 @@
 "use client";
 import React, { useState, useMemo } from "react";
+import Head from "next/head";
+
 import {
   Box,
   Flex,
@@ -41,6 +43,15 @@ export default function BlogList() {
   };
 
   return (
+    <>
+    <Head>
+        <title>Real Estate Blog – Market Trends & Insights</title>
+        <meta
+          name="description"
+          content="Read the latest blog posts on real estate market trends, property insights, and investment tips."
+          />
+        <link rel="canonical" href="https://evergreenestateglob.com/blog" />
+      </Head>
     <Box p={{ base: 4, md: 10 }} maxW="1100px" mx="auto">
       <Heading mb={6} textAlign="center">
         Explore Our Latest Blog Posts
@@ -138,7 +149,7 @@ export default function BlogList() {
 
         {[...Array(totalPages)].map((_, i) => (
           <Button
-            key={i}
+          key={i}
             onClick={() => setPage(i + 1)}
             minW="44px"
             h="44px"
@@ -160,8 +171,9 @@ export default function BlogList() {
           isDisabled={page === totalPages}
           variant="outline"
           rounded="md"
-        />
+          />
       </HStack>
     </Box>
+          </>
   );
 }
