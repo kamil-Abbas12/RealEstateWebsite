@@ -12,6 +12,8 @@ export default function BlogPost({ blog }) {
     <>
       {/* ✅ SEO Meta Tags */}
      <Head>
+       <title>Blog Grid - Evergreen Estate Global</title>
+  <meta name="description" content="Explore our latest real estate blogs in grid view." />
   <title>{blog.metaTitle || blog.title}</title>
   <meta
     name="description"
@@ -25,10 +27,8 @@ export default function BlogPost({ blog }) {
   <meta property="og:image" content={blog.featuredImage} />
 
   {/* Canonical */}
-  <link
-    rel="canonical"
-    href={`https://YOURDOMAIN.com/blog/${blog.slug}`}
-  />
+ <link rel="canonical" href={`https://evergreenestateglob.com/blog/${blog.slug}`} />
+
 </Head>
 
 

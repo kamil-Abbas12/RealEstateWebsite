@@ -1,98 +1,90 @@
-import Head from "next/head";
+"use client";
 import React, { useState } from "react";
-import {
-  SimpleGrid,
-  Box,
-  Image,
-  Text,
-  Heading,
-  Link,
-  HStack,
-  Button,
-} from "@chakra-ui/react";
+import { SimpleGrid, Box, Image, Text, Heading, Button } from "@chakra-ui/react";
 import NextLink from "next/link";
 import blogs from "../../data/blog";
 
 export default function BlogGrid() {
   const itemsPerPage = 9;
   const [page, setPage] = useState(1);
-
   const totalPages = Math.ceil(blogs.length / itemsPerPage);
+
   const startIndex = (page - 1) * itemsPerPage;
-  const visibleBlogs = blogs.slice(startIndex, startIndex + itemsPerPage);
+  const currentItems = blogs.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <Box p={6}>
-      <Heading mb={6}>Blog Grid</Heading>
+      <Heading size="lg" mb={6} textAlign="center">
+        Latest Blog Posts
+      </Heading>
 
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-        {visibleBlogs.map((blog) => (
+      <SimpleGrid columns={[1, 2, 3]} spacing={6}>
+        {currentItems.map((blog) => (
           <Box
             key={blog.id}
             borderWidth="1px"
-            borderRadius="md"
+            borderRadius="lg"
             overflow="hidden"
-            boxShadow="sm"
-            transition="all 0.3s"
-            _hover={{ transform: "translateY(-5px)", boxShadow: "xl" }}
+            bg="white"
+            shadow="md"
+            _hover={{ shadow: "lg", transform: "scale(1.02)" }}
+            transition="0.2s"
           >
-            <Image
-              src={blog.featuredImage}
-              alt={blog.title}
-              width="100%"
-              height="200px"
-              objectFit="cover"
-              fallbackSrc="/placeholder.png"
-            />
+            <NextLink href={`/blog/${blog.slug}`}>
+              <Image
+                src={blog.featuredImage}
+                alt={blog.title}
+                w="100%"
+                h="200px"
+                objectFit="cover"
+              />
+            </NextLink>
 
             <Box p={4}>
-              <Heading size="md">{blog.title}</Heading>
-              <Text mt={2}>{blog.excerpt}</Text>
+              <Text fontSize="xs" color="gray.500">
+                {blog.date}
+              </Text>
 
-              <Link
-                as={NextLink}
-                href={`/blog/${blog.slug}`}
-                color="teal.500"
-                mt={2}
-                display="block"
-              >
-                Read More
-              </Link>
+              <NextLink href={`/blog/${blog.slug}`}>
+                <Heading size="md" mt={2} mb={2} _hover={{ color: "blue.500" }}>
+                  {blog.title}
+                </Heading>
+              </NextLink>
+
+              <Text fontSize="sm" color="gray.600" noOfLines={3}>
+                {blog.excerpt}
+              </Text>
+
+              {/* READ MORE BUTTON */}
+              <NextLink href={`/blog/${blog.slug}`}>
+                <Button
+                  size="sm"
+                  mt={4}
+                  colorScheme="blue"
+                  variant="outline"
+                >
+                  Read More →
+                </Button>
+              </NextLink>
             </Box>
           </Box>
         ))}
       </SimpleGrid>
 
-      {/* Pagination */}
-      <HStack spacing={4} justify="center" mt="10">
-        <Button
-          onClick={() => setPage((p) => Math.max(p - 1, 1))}
-          isDisabled={page === 1}
-          variant="outline"
-        >
-          ←
+      {/* PAGINATION */}
+      <Box mt={8} display="flex" justifyContent="center" alignItems="center" gap={4}>
+        <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
+          Previous
         </Button>
 
-        {[...Array(totalPages)].map((_, index) => (
-          <Button
-            key={index}
-            onClick={() => setPage(index + 1)}
-            bg={page === index + 1 ? "black" : "white"}
-            color={page === index + 1 ? "white" : "black"}
-            borderWidth="1px"
-          >
-            {index + 1}
-          </Button>
-        ))}
+        <Text fontWeight="bold">
+          Page {page} of {totalPages}
+        </Text>
 
-        <Button
-          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-          isDisabled={page === totalPages}
-          variant="outline"
-        >
-          →
+        <Button disabled={page === totalPages} onClick={() => setPage(page + 1)}>
+          Next
         </Button>
-      </HStack>
+      </Box>
     </Box>
   );
 }
