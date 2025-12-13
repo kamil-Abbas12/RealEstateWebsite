@@ -50,7 +50,7 @@ export default function BlogList() {
           name="description"
           content="Read the latest blog posts on real estate market trends, property insights, and investment tips."
           />
-        <link rel="canonical" href="https://evergreenestateglob.com/blog" />
+        <link rel="canonical" href="https://evergreenestateglob.com/blog/list" />
       </Head>
     <Box p={{ base: 4, md: 10 }} maxW="1100px" mx="auto">
       <Heading mb={6} textAlign="center">
