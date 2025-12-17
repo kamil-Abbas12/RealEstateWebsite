@@ -1,4 +1,5 @@
 "use client";
+// import FreePropertyTimer from "@/components/FreePropertyTimer";
 
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
@@ -70,9 +71,17 @@ export default function HeroSection() {
           maxW={{ base: "90%", md: "70%" }}
           lineHeight="1.6"
           textShadow="0 1px 5px rgba(0,0,0,0.5)"
+          mb={6}
         >
           {t("hero.description")}{" "}
         </Text>{" "}
+          {/* ✅ TIMER HERE */}
+
+        {/* <Box maxW="490px" w="90%"
+        mb={6}
+        >
+    <FreePropertyTimer />
+  </Box> */}
       </Flex>{" "}
     </Box>
   );
