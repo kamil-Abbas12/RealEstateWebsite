@@ -11,7 +11,11 @@ export default function Document() {
   />
         <meta name="msvalidate.01" content="429BBDF5430000024ECA3FABBBC0E793" />
         <meta name="google-site-verification" content="e3jR08NOIOKT2rBvxqFo8HtBc32vbGE7izDwhPkydWg" />
-
+  <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1840700286460596"
+          crossOrigin="anonymous"
+        ></script>
 <link rel="icon" href="/favicon.ico" />
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
 <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
